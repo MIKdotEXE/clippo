@@ -217,6 +217,11 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     return false;
   }
 
+  if (req.action === "openSettings") {
+    chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+    return false;
+  }
+
   if (req.action === "setUserId") {
     setUserId(req.userId).then(() => sendResponse({ success: true }));
     return true;

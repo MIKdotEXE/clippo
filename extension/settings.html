@@ -182,6 +182,27 @@
     .back-link:hover {
       color: var(--brand-primary);
     }
+
+    /* Dark theme */
+    body.dark {
+      --bg-white: #1a1a2e;
+      --bg-light: #0f0f1a;
+      --border-light: rgba(237, 28, 36, 0.2);
+      --border-medium: rgba(237, 28, 36, 0.35);
+      --text-primary: #e0e0e0;
+      --text-secondary: #aaa;
+      --text-muted: #777;
+    }
+
+    body.dark .settings-section {
+      background: #1a1a2e;
+    }
+
+    body.dark input[type="text"] {
+      background: #0f0f1a !important;
+      color: #e0e0e0 !important;
+      border-color: rgba(237, 28, 36, 0.2) !important;
+    }
   </style>
 </head>
 <body>
@@ -234,13 +255,86 @@
     </div>
 
     <div class="settings-section">
+      <div class="section-title">Appearance</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Dark theme</div>
+          <div class="setting-desc">Use dark colors for archive and settings</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-theme">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
       <div class="section-title">Account</div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <div class="setting-label">Logged in as</div>
+          <div class="setting-label">Username</div>
+          <div class="setting-desc">Visible in your profile</div>
+        </div>
+        <input type="text" id="setting-username" placeholder="Your name" style="
+          width: 140px;
+          padding: 8px 10px;
+          border: 1px solid var(--border-light);
+          border-radius: 6px;
+          font-family: 'Zain', sans-serif;
+          font-size: 13px;
+          color: var(--text-primary);
+          background: var(--bg-light);
+          transition: border-color 0.2s;
+        ">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Email</div>
           <div class="setting-desc" id="user-email">Not logged in</div>
         </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Change password</div>
+          <div class="setting-desc">Reset your password via email</div>
+        </div>
+        <button id="change-password-btn" style="
+          padding: 8px 14px;
+          background: var(--bg-light);
+          border: 1px solid var(--border-medium);
+          border-radius: 6px;
+          font-family: 'Zain', sans-serif;
+          font-size: 11px;
+          font-weight: 700;
+          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+        ">Reset</button>
+      </div>
+
+      <div class="setting-row" style="border-bottom: none;">
+        <div class="setting-info">
+          <div class="setting-label" style="color: var(--brand-primary);">Delete account</div>
+          <div class="setting-desc">Request account deletion</div>
+        </div>
+        <button id="delete-account-btn" style="
+          padding: 8px 14px;
+          background: rgba(237, 28, 36, 0.08);
+          border: 1px solid rgba(237, 28, 36, 0.25);
+          border-radius: 6px;
+          font-family: 'Zain', sans-serif;
+          font-size: 11px;
+          font-weight: 700;
+          color: var(--brand-primary);
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+        ">Delete</button>
       </div>
     </div>
 

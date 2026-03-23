@@ -302,6 +302,32 @@ function createWidget(video) {
         color: white;
       }
 
+      #clippo-widget .vm-header-btns {
+        display: flex;
+        gap: 4px;
+      }
+
+      #clippo-widget .vm-settings-btn {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        background: transparent;
+        border: 1px solid ${COLORS.borderLight};
+        border-radius: 6px;
+        color: ${COLORS.textMuted};
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      #clippo-widget .vm-settings-btn:hover {
+        background: ${COLORS.brandPrimary};
+        border-color: ${COLORS.brandPrimary};
+        color: white;
+      }
+
       #clippo-widget .vm-label {
         font-family: 'Zain', sans-serif !important;
         font-size: 11px;
@@ -580,6 +606,17 @@ function createWidget(video) {
   }
 }
 
+function bindSettingsBtn() {
+  const btn = document.getElementById("vm-settings");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      try {
+        chrome.runtime.sendMessage({ action: "openSettings" });
+      } catch (e) {}
+    });
+  }
+}
+
 function setupLogoFallback() {
   const logoImg = widget.querySelector(".vm-logo-img");
   if (logoImg) {
@@ -605,11 +642,18 @@ function renderAuthForm() {
         <img class="vm-logo-img" src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo"/>
         <span class="vm-logo">Clippo</span>
       </div>
-      <button class="vm-close-btn" id="vm-close" title="Close">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
-      </button>
+      <div class="vm-header-btns">
+        <button class="vm-settings-btn" id="vm-settings" title="Settings">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+        <button class="vm-close-btn" id="vm-close" title="Close">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="vm-auth-welcome">
@@ -654,6 +698,7 @@ function renderAuthForm() {
   `;
 
   setupLogoFallback();
+  bindSettingsBtn();
   bindAuthForm();
 }
 
@@ -664,11 +709,18 @@ function renderClipForm() {
         <img class="vm-logo-img" src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo"/>
         <span class="vm-logo">Clippo</span>
       </div>
-      <button class="vm-close-btn" id="vm-close" title="Close">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
-      </button>
+      <div class="vm-header-btns">
+        <button class="vm-settings-btn" id="vm-settings" title="Settings">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+        <button class="vm-close-btn" id="vm-close" title="Close">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <label class="vm-label">Clip Title</label>
@@ -708,6 +760,7 @@ function renderClipForm() {
   `;
 
   setupLogoFallback();
+  bindSettingsBtn();
   bindWidget(currentVideo);
   loadLists();
 

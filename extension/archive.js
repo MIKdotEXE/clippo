@@ -29,6 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("main").classList.toggle("shifted");
   });
 
+  // Settings
+  document.getElementById("settingsBtn").addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+  });
+
   // Logout - notify background to clear auth on all tabs
   document.getElementById("logoutBtn").addEventListener("click", () => {
     if (confirm("Are you sure you want to logout?")) {
