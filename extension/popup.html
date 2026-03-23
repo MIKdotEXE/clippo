@@ -11,8 +11,8 @@
       --brand-dark: #c41920;
       --bg-white: #ffffff;
       --bg-light: #fafafa;
-      --border-light: rgba(237, 28, 36, 0.15);
-      --border-medium: rgba(237, 28, 36, 0.3);
+      --border-light: rgba(237, 28, 36, 0.12);
+      --border-medium: rgba(237, 28, 36, 0.25);
       --text-primary: #1a1a1a;
       --text-secondary: #4a4a4a;
       --text-muted: #7a7a7a;
@@ -21,177 +21,88 @@
       --accent-success: #27ae60;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Zain', sans-serif;
-      background: var(--bg-light);
+      background: linear-gradient(135deg, var(--bg-light) 0%, #fff5f5 100%);
       color: var(--text-primary);
-      width: 320px;
-      min-height: 400px;
+      width: 340px;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .header {
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      padding: 20px;
+    .popup-container {
+      width: 100%;
+      padding: 28px 24px;
+    }
+
+    /* Logo */
+    .logo-section {
       text-align: center;
-      color: var(--text-on-brand);
+      margin-bottom: 24px;
     }
 
-    .header img {
-      width: 48px;
-      height: 48px;
-      border-radius: 10px;
-      margin-bottom: 8px;
+    .logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      border-radius: 14px;
+      margin-bottom: 12px;
     }
 
-    .header h1 {
-      font-family: 'Zain', sans-serif;
-      font-size: 20px;
+    .logo-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--text-on-brand);
+    }
+
+    .logo-section h1 {
+      font-size: 22px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      color: var(--brand-dark);
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
-    .header p {
+    .logo-section p {
+      color: var(--text-muted);
       font-size: 12px;
-      opacity: 0.8;
       margin-top: 4px;
     }
 
-    .content {
-      padding: 20px;
-    }
-
-    /* Logged Out State */
-    #logged-out {
-      display: block;
-    }
-
-    /* Logged In State */
-    #logged-in {
-      display: none;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
+    /* Google button */
+    .google-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--bg-white);
       border: 1px solid var(--border-medium);
-      background: var(--bg-white);
-      border-radius: 6px;
+      border-radius: 8px;
       font-family: 'Zain', sans-serif;
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--brand-primary);
-      color: var(--brand-primary);
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      border-color: var(--brand-primary);
-      color: var(--text-on-brand);
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    .form-group label {
-      display: block;
-      font-family: 'Zain', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-white);
-      border: 1px solid var(--border-light);
-      border-radius: 6px;
-      font-family: 'Zain', sans-serif;
-      font-size: 13px;
       color: var(--text-primary);
-      transition: all 0.2s ease;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.12);
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      border: none;
-      border-radius: 6px;
-      font-family: 'Zain', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--text-on-brand);
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .submit-btn:hover {
-      opacity: 0.9;
+    .google-btn:hover {
+      border-color: var(--brand-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .google-btn svg { width: 16px; height: 16px; }
 
-    .message {
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .message.error {
-      display: block;
-      background: rgba(231, 76, 60, 0.1);
-      border: 1px solid rgba(231, 76, 60, 0.3);
-      color: var(--accent-danger);
-    }
-
-    .message.success {
-      display: block;
-      background: rgba(39, 174, 96, 0.1);
-      border: 1px solid rgba(39, 174, 96, 0.3);
-      color: var(--accent-success);
-    }
-
-    #signup-form {
-      display: none;
-    }
-
+    /* Divider */
     .divider {
       display: flex;
       align-items: center;
@@ -215,71 +126,164 @@
       color: var(--text-muted);
     }
 
-    .google-btn {
-      width: 100%;
-      padding: 10px;
-      background: var(--bg-white);
-      border: 1px solid var(--border-medium);
-      border-radius: 6px;
-      font-family: 'Zain', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
+    /* Tabs */
+    .tabs {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      margin-bottom: 18px;
     }
 
-    .google-btn:hover {
-      border-color: var(--brand-primary);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .google-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* Logged In UI */
-    .user-info {
-      background: var(--bg-white);
-      border: 1px solid var(--border-light);
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-light);
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .user-email {
-      font-size: 14px;
-      color: var(--text-primary);
-      font-weight: 500;
-      word-break: break-all;
-    }
-
-    .user-label {
       font-family: 'Zain', sans-serif;
       font-size: 11px;
+      font-weight: 700;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--brand-primary);
+      color: var(--brand-primary);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      border-color: var(--brand-primary);
+      color: var(--text-on-brand);
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--text-muted);
       margin-bottom: 4px;
     }
 
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-light);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      font-family: 'Zain', sans-serif;
+      font-size: 13px;
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.12);
+    }
+
+    .form-group input::placeholder { color: var(--text-muted); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      border: none;
+      border-radius: 8px;
+      font-family: 'Zain', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-on-brand);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 4px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(237, 28, 36, 0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      color: var(--accent-danger);
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.3);
+      color: var(--accent-success);
+    }
+
+    #signup-form { display: none; }
+
+    /* Logged In */
+    #logged-in { display: none; }
+
+    .user-info {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .user-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 700;
+      word-break: break-all;
+    }
+
     .action-btn {
       width: 100%;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-family: 'Zain', sans-serif;
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.5px;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -292,20 +296,31 @@
       color: var(--text-on-brand);
     }
 
+    .action-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(237, 28, 36, 0.3);
+    }
+
     .action-btn.secondary {
       background: var(--bg-white);
       border: 1px solid var(--border-medium);
       color: var(--text-secondary);
     }
 
-    .action-btn.danger {
-      background: var(--bg-white);
-      border: 1px solid rgba(231, 76, 60, 0.3);
-      color: var(--accent-danger);
+    .action-btn.secondary:hover {
+      border-color: var(--brand-primary);
+      color: var(--brand-primary);
     }
 
-    .action-btn:hover {
-      opacity: 0.9;
+    .action-btn.danger {
+      background: var(--bg-white);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      color: var(--accent-danger);
+      font-size: 12px;
+    }
+
+    .action-btn.danger:hover {
+      background: rgba(231, 76, 60, 0.05);
     }
 
     .loading-spinner {
@@ -318,19 +333,19 @@
       animation: spin 0.8s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48_n.png" alt="Clippo">
-    <h1>Clippo</h1>
-    <p>Save your favorite video clips</p>
-  </div>
+  <div class="popup-container">
+    <div class="logo-section">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <h1>Clippo</h1>
+      <p>Save your favorite YouTube moments</p>
+    </div>
 
-  <div class="content">
     <!-- Logged Out State -->
     <div id="logged-out">
       <button class="google-btn" id="google-btn">
@@ -397,7 +412,7 @@
         Open Archive
       </button>
 
-      <button class="action-btn" id="settings-btn" style="background: var(--bg-light); color: var(--text-secondary); border: 1px solid var(--border-medium);">
+      <button class="action-btn secondary" id="settings-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
         </svg>
