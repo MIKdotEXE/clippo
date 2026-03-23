@@ -546,6 +546,23 @@ document.addEventListener("DOMContentLoaded", () => {
         collapseCard(card);
       });
 
+      // Share button
+      card.querySelector(".btn-share")?.addEventListener("click", () => {
+        const playerUrl = `https://clippo.app/player/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}`;
+        const shareText = `${clip.title} - Clippo Clip`;
+
+        if (navigator.share) {
+          navigator.share({ title: shareText, url: playerUrl }).catch(() => {});
+        } else {
+          navigator.clipboard.writeText(playerUrl).then(() => {
+            const btn = card.querySelector(".btn-share");
+            const origHTML = btn.innerHTML;
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.innerHTML = origHTML; }, 1500);
+          });
+        }
+      });
+
       // Delete button
       card.querySelector(".btn-delete")?.addEventListener("click", () => {
         if (confirm("Delete this clip?")) {
@@ -644,6 +661,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="btn-play">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               Watch Clip
+            </button>
+            <button class="btn-share" title="Share">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
             </button>
             <button class="btn-delete" title="Delete">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

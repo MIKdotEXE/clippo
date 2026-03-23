@@ -111,12 +111,16 @@ async function loadData() {
 
   } catch (error) {
     console.error('Error loading data:', error);
-    clipsContainer.innerHTML = `
-      <div class="empty-state">
-        <h3>Error loading clips</h3>
-        <p>${error.message}</p>
-      </div>
-    `;
+    const errorEl = document.createElement('div');
+    errorEl.className = 'empty-state';
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Error loading clips';
+    const p = document.createElement('p');
+    p.textContent = error.message;
+    errorEl.appendChild(h3);
+    errorEl.appendChild(p);
+    clipsContainer.innerHTML = '';
+    clipsContainer.appendChild(errorEl);
   }
 }
 

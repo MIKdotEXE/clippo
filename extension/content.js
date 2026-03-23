@@ -288,6 +288,20 @@ function createWidget(video) {
         color: ${COLORS.textOnBrand};
       }
 
+      #clippo-widget .vm-duration {
+        text-align: center;
+        font-family: 'Zain', sans-serif !important;
+        font-size: 11px;
+        font-weight: 700;
+        color: ${COLORS.textMuted};
+        margin: -4px 0 8px;
+        min-height: 16px;
+      }
+
+      #clippo-widget .vm-duration.has-value {
+        color: ${COLORS.brandPrimary};
+      }
+
       #clippo-widget .vm-actions {
         display: flex;
         gap: 8px;
@@ -553,6 +567,7 @@ function renderClipForm() {
         <input type="text" id="vm-end" placeholder="0:00"/>
       </div>
     </div>
+    <div id="vm-duration" class="vm-duration"></div>
 
     <div class="vm-actions">
       <button class="vm-btn-primary" id="vm-save">Save Clip</button>
@@ -786,12 +801,29 @@ function bindWidget(video) {
   const $ = id => document.getElementById(id);
   const getTime = () => formatTime(Math.floor(video.currentTime));
 
+  function updateDuration() {
+    const dur = $("vm-duration");
+    const s = parseTime($("vm-start").value);
+    const e = parseTime($("vm-end").value);
+    if (!isNaN(s) && !isNaN(e) && e > s) {
+      dur.textContent = `Duration: ${formatTime(e - s)}`;
+      dur.classList.add("has-value");
+    } else {
+      dur.textContent = "";
+      dur.classList.remove("has-value");
+    }
+  }
+
   $("vm-set-start").addEventListener("click", () => {
     $("vm-start").value = getTime();
+    updateDuration();
   });
   $("vm-set-end").addEventListener("click", () => {
     $("vm-end").value = getTime();
+    updateDuration();
   });
+  $("vm-start").addEventListener("input", updateDuration);
+  $("vm-end").addEventListener("input", updateDuration);
 
   $("vm-save").addEventListener("click", () => {
     const title = $("vm-title").value.trim();
@@ -847,11 +879,21 @@ function bindWidget(video) {
                 return;
               }
               if (resp?.success) {
-                alert("Clip saved!");
+                // Show success feedback and auto-hide widget
+                const saveBtn = $("vm-save");
+                const origText = saveBtn.textContent;
+                saveBtn.textContent = "✓ Saved!";
+                saveBtn.style.background = "#27ae60";
                 ["vm-title","vm-macro","vm-cat","vm-start","vm-end"]
                   .forEach(id => $(id).value = "");
-                loadLists(); // ricarica datalist con le nuove voci
-                filterCategoriesByMacro(); // aggiorna subito la lista categorie
+                loadLists();
+                filterCategoriesByMacro();
+                setTimeout(() => {
+                  saveBtn.textContent = origText;
+                  saveBtn.style.background = "";
+                  isVisible = false;
+                  widget.style.display = "none";
+                }, 1200);
               } else {
                 alert("Error saving clip");
               }
