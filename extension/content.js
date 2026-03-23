@@ -1021,6 +1021,7 @@ function bindWidget(video) {
 
   $("vm-open-archive").addEventListener("click", () => {
     try {
+      if (video && !video.paused) video.pause();
       chrome.runtime.sendMessage({ action: "openArchive" });
     } catch (e) {
       // Extension context invalidated
