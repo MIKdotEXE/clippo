@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <title>Clippo Settings</title>
+  <style>
+    :root {
+      --brand-primary: #ed1c24;
+      --brand-dark: #c41920;
+      --bg-white: #ffffff;
+      --bg-light: #fafafa;
+      --border-light: rgba(237, 28, 36, 0.12);
+      --border-medium: rgba(237, 28, 36, 0.25);
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #7a7a7a;
+      --text-on-brand: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Zain', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .settings-container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .settings-header img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .settings-header h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      letter-spacing: 1px;
+    }
+
+    .settings-header span {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .settings-section {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-info {
+      flex: 1;
+      margin-right: 16px;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ccc;
+      border-radius: 24px;
+      transition: 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--brand-primary);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Save feedback */
+    .save-msg {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #27ae60;
+      opacity: 0;
+      transition: opacity 0.3s;
+      margin-top: 8px;
+    }
+
+    .save-msg.show {
+      opacity: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .back-link:hover {
+      color: var(--brand-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <div class="settings-header">
+      <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo">
+      <h1>Settings</h1>
+      <span>v1.0.0</span>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-title">Widget</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Show overlay icon</div>
+          <div class="setting-desc">Show Clippo icon on YouTube video player</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-overlay" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Auto-pause on Set Start/End</div>
+          <div class="setting-desc">Pause the video when you click Set Start or Set End</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-autopause">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-title">Playback Controls</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Show video controls</div>
+          <div class="setting-desc">Show -5s, Play/Pause, +5s buttons in the widget</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-controls" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-title">Account</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Logged in as</div>
+          <div class="setting-desc" id="user-email">Not logged in</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-msg" id="save-msg">Settings saved</div>
+
+    <a class="back-link" id="close-settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Close
+    </a>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -69,10 +69,50 @@ if (!window.__clippo_listener_added) {
   });
 }
 
-// Avvia subito il polling per il <video> (only once)
+// Settings (defaults)
+if (typeof clippoSettings === 'undefined') {
+  var clippoSettings = {
+    showOverlay: true,
+    autoPause: false,
+    showControls: true
+  };
+}
+
+// Listen for settings changes in real-time
+if (!window.__clippo_settings_listener) {
+  window.__clippo_settings_listener = true;
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') return;
+    if (changes.clippo_show_overlay !== undefined) {
+      clippoSettings.showOverlay = changes.clippo_show_overlay.newValue;
+      const btn = document.getElementById("clippo-overlay-btn");
+      if (btn) btn.style.display = clippoSettings.showOverlay ? "flex" : "none";
+    }
+    if (changes.clippo_autopause !== undefined) {
+      clippoSettings.autoPause = changes.clippo_autopause.newValue;
+    }
+    if (changes.clippo_show_controls !== undefined) {
+      clippoSettings.showControls = changes.clippo_show_controls.newValue;
+      const ctrl = document.getElementById("vm-video-controls");
+      if (ctrl) ctrl.style.display = clippoSettings.showControls ? "" : "none";
+    }
+  });
+}
+
+// Load settings then init
 if (!window.__clippo_init_started) {
   window.__clippo_init_started = true;
-  initWidget();
+  try {
+    chrome.storage.local.get(['clippo_show_overlay', 'clippo_autopause', 'clippo_show_controls'], (data) => {
+      if (chrome.runtime.lastError) { initWidget(); return; }
+      if (data.clippo_show_overlay !== undefined) clippoSettings.showOverlay = data.clippo_show_overlay;
+      if (data.clippo_autopause !== undefined) clippoSettings.autoPause = data.clippo_autopause;
+      if (data.clippo_show_controls !== undefined) clippoSettings.showControls = data.clippo_show_controls;
+      initWidget();
+    });
+  } catch (e) {
+    initWidget();
+  }
 }
 
 function initWidget() {
@@ -514,7 +554,7 @@ function createWidget(video) {
   document.body.appendChild(widget);
 
   // Add overlay button on YouTube video player
-  if (!document.getElementById("clippo-overlay-btn")) {
+  if (clippoSettings.showOverlay && !document.getElementById("clippo-overlay-btn")) {
     const addOverlayBtn = () => {
       const playerContainer = document.querySelector("#movie_player") || document.querySelector(".html5-video-player");
       if (!playerContainer) {
@@ -655,7 +695,7 @@ function renderClipForm() {
     </div>
     <div id="vm-duration" class="vm-duration"></div>
 
-    <div class="vm-video-controls">
+    <div class="vm-video-controls" id="vm-video-controls" style="${clippoSettings.showControls ? '' : 'display:none'}">
       <button id="vm-back5" title="Back 5 seconds">◀ 5s</button>
       <button id="vm-playpause" title="Play/Pause">⏯ Play</button>
       <button id="vm-fwd5" title="Forward 5 seconds">5s ▶</button>
@@ -908,10 +948,12 @@ function bindWidget(video) {
 
   $("vm-set-start").addEventListener("click", () => {
     $("vm-start").value = getTime();
+    if (clippoSettings.autoPause && !video.paused) video.pause();
     updateDuration();
   });
   $("vm-set-end").addEventListener("click", () => {
     $("vm-end").value = getTime();
+    if (clippoSettings.autoPause && !video.paused) video.pause();
     updateDuration();
   });
   $("vm-start").addEventListener("input", updateDuration);

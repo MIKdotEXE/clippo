@@ -218,6 +218,12 @@ logoutBtn.addEventListener('click', async () => {
   showLoggedOut();
 });
 
+// Settings
+document.getElementById('settings-btn').addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+  window.close();
+});
+
 // Google OAuth - opens web auth page
 document.getElementById('google-btn').addEventListener('click', () => {
   chrome.tabs.create({ url: 'https://clippo.app/auth/?google=1' });
