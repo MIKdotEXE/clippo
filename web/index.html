@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Clippo - Save your favorite YouTube moments. Clip, organize, and revisit the best parts of any YouTube video.">
+  <link rel="icon" type="image/png" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png">
+  <title>Clippo - Save your favorite YouTube moments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --brand-primary: #ed1c24;
+      --brand-dark: #c41920;
+      --brand-light: #ff3b42;
+      --bg-white: #ffffff;
+      --bg-light: #fafafa;
+      --border-light: rgba(237, 28, 36, 0.12);
+      --border-medium: rgba(237, 28, 36, 0.25);
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #7a7a7a;
+      --text-on-brand: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Zain', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .header-logo-icon {
+      height: 36px;
+    }
+
+    .header-logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .header-logo span {
+      font-family: 'Zain', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      letter-spacing: 1px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-nav a, .header-nav button {
+      font-family: 'Zain', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      background: transparent;
+    }
+
+    .nav-link:hover {
+      color: var(--brand-primary);
+    }
+
+    .nav-btn-primary {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      color: var(--text-on-brand);
+    }
+
+    .nav-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(237, 28, 36, 0.3);
+    }
+
+    .nav-btn-secondary {
+      background: var(--bg-light);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .nav-btn-secondary:hover {
+      border-color: var(--brand-primary);
+      color: var(--brand-primary);
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--text-muted);
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-light) 100%);
+      padding: 80px 24px 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(237, 28, 36, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(237, 28, 36, 0.03) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 300px;
+      margin-bottom: 24px;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-family: 'Zain', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .tagline {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--brand-primary);
+      margin-bottom: 16px;
+    }
+
+    .description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 80px 24px;
+      background: var(--bg-white);
+    }
+
+    .features-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .features-title {
+      text-align: center;
+      font-family: 'Zain', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--brand-primary);
+      margin-bottom: 48px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(237, 28, 36, 0.12);
+      border-color: var(--brand-primary);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-family: 'Zain', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 80px 24px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      color: var(--text-on-brand);
+    }
+
+    .cta-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-family: 'Zain', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .cta h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .cta p {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 32px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--bg-white);
+      color: var(--brand-dark);
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-family: 'Zain', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-note {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    /* Footer */
+    footer {
+      padding: 32px 24px;
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-light);
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-logo-icon {
+      height: 28px;
+    }
+
+    .footer-logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .footer-logo span {
+      font-family: 'Zain', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      letter-spacing: 1px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand-primary);
+    }
+
+    .copyright {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .header-nav {
+        gap: 8px;
+      }
+
+      .user-email {
+        display: none;
+      }
+
+      .hero {
+        padding: 60px 20px 80px;
+      }
+
+      h1 {
+        font-size: 32px;
+        letter-spacing: 1px;
+      }
+
+      .tagline {
+        font-size: 20px;
+      }
+
+      .description {
+        font-size: 16px;
+      }
+
+      .features {
+        padding: 60px 20px;
+      }
+
+      .cta {
+        padding: 60px 20px;
+      }
+
+      .cta h2 {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 28px;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+      }
+
+      .nav-btn-primary, .nav-btn-secondary {
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="/" class="header-logo">
+        <div class="header-logo-icon">
+          <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo_h.png" alt="Clippo Logo">
+        </div>
+      </a>
+      <nav class="header-nav" id="header-nav">
+        <!-- Will be populated by JavaScript -->
+        <a href="/auth/" class="nav-btn-secondary">Login</a>
+        <a href="/auth/" class="nav-btn-primary">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="logo">
+        <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo_h.png" alt="Clippo Logo">
+      </div>
+      <p class="tagline">Save your favorite YouTube moments</p>
+      <p class="description">Clip, organize, and revisit the best parts of any YouTube video</p>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="features-container">
+      <h2 class="features-title">Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🎬</span>
+          <h3>Clip Timestamps</h3>
+          <p>Mark start and end points on any YouTube video to save the moments that matter most</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📁</span>
+          <h3>Organize</h3>
+          <p>Group clips into categories and macro-categories for easy access and management</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔄</span>
+          <h3>Sync Everywhere</h3>
+          <p>Access your clips from any device with cloud sync and secure backup</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="cta-content">
+      <span class="badge">Now Available</span>
+      <h2>Start Saving Your Moments</h2>
+      <p>Get the Chrome extension and start building your personal video library today</p>
+      <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" class="btn-primary" target="_blank">Get the Chrome Extension</a>
+      <p class="cta-note">Free on Chrome Web Store</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">
+          <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo_h.png" alt="Clippo Logo">
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/privacy/">Privacy Policy</a>
+      </div>
+      <p class="copyright">&copy; 2025 Clippo</p>
+    </div>
+  </footer>
+
+  <script>
+    // Supabase credentials
+    const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
+
+    const headerNav = document.getElementById('header-nav');
+
+    function updateHeader(isLoggedIn, email) {
+      if (isLoggedIn) {
+        headerNav.innerHTML = `
+          <span class="user-email">${email || 'User'}</span>
+          <a href="/archive/" class="nav-link">Archive</a>
+          <button class="nav-btn-secondary" onclick="logout()">Logout</button>
+        `;
+      } else {
+        headerNav.innerHTML = `
+          <a href="/auth/" class="nav-btn-secondary">Login</a>
+          <a href="/auth/" class="nav-btn-primary">Sign Up</a>
+        `;
+      }
+    }
+
+    function logout() {
+      window.location.href = '/auth/logout/';
+    }
+
+    async function checkAuth() {
+      // First check localStorage
+      const userId = localStorage.getItem('clippo_user_id');
+      const userEmail = localStorage.getItem('clippo_user_email');
+
+      if (userId) {
+        updateHeader(true, userEmail);
+        return;
+      }
+
+      // Then check Supabase session
+      try {
+        if (window.supabase) {
+          const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          const { data: { session } } = await supabase.auth.getSession();
+
+          if (session?.user) {
+            localStorage.setItem('clippo_user_id', session.user.id);
+            localStorage.setItem('clippo_user_email', session.user.email);
+            updateHeader(true, session.user.email);
+            return;
+          }
+        }
+      } catch (e) {
+        console.log('Auth check error:', e);
+      }
+
+      updateHeader(false);
+    }
+
+    // Check auth on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkAuth);
+    } else {
+      checkAuth();
+    }
+  </script>
+</body>
+</html>
+

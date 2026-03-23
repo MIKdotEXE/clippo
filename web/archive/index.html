@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clippo - Archive</title>
+  <link rel="icon" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --brand-primary: #ed1c24;
+      --brand-dark: #c41920;
+      --bg-white: #ffffff;
+      --bg-light: #fafafa;
+      --border-light: rgba(237, 28, 36, 0.12);
+      --border-medium: rgba(237, 28, 36, 0.25);
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #7a7a7a;
+      --text-on-brand: #ffffff;
+      --accent-danger: #ed1c24;
+      --accent-success: #27ae60;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Zain', sans-serif;
+      background: linear-gradient(135deg, var(--bg-light) 0%, #fff5f5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+
+    .container {
+      background: var(--bg-white);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(237, 28, 36, 0.12);
+      padding: 48px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      border: 1px solid var(--border-light);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(237, 28, 36, 0.25);
+    }
+
+    .logo svg {
+      width: 40px;
+      height: 40px;
+      fill: var(--text-on-brand);
+    }
+
+    h1 {
+      font-family: 'Zain', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .status {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .status.loading { background: var(--bg-light); color: var(--text-secondary); }
+    .status.success { background: rgba(39, 174, 96, 0.1); border: 1px solid rgba(39, 174, 96, 0.3); color: var(--accent-success); }
+    .status.error { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); color: var(--accent-danger); }
+    .status.info { background: rgba(237, 28, 36, 0.1); border: 1px solid rgba(237, 28, 36, 0.3); color: var(--brand-primary); }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-light);
+      border-radius: 50%;
+      border-top-color: var(--brand-primary);
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-family: 'Zain', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      margin: 6px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      color: var(--text-on-brand);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-white);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--brand-primary);
+      color: var(--brand-primary);
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .user-info {
+      background: var(--bg-light);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .user-info strong { color: var(--text-primary); }
+    .hidden { display: none !important; }
+
+    .footer-links {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+      font-size: 13px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin: 0 12px;
+    }
+
+    .footer-links a:hover { color: var(--brand-primary); }
+    .extension-icon { font-size: 48px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </div>
+    <h1>Clip Archive</h1>
+    <p class="subtitle">Access your saved video moments</p>
+
+    <div id="content">
+      <div class="status loading">
+        <span class="spinner"></span>
+        Loading...
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="../auth/">Account</a>
+    </div>
+  </div>
+
+  <script>
+    // Extension ID
+    const EXTENSION_ID = 'dffdbdjjppbfkejaaeeglflebiepofed';
+    const content = document.getElementById('content');
+
+    function showNotLoggedIn() {
+      content.innerHTML = `
+        <div class="status error">You need to login to access your clips</div>
+        <div class="buttons">
+          <a href="../auth/" class="btn btn-primary">Login / Sign Up</a>
+          <a href="/" class="btn btn-secondary">Back to Home</a>
+        </div>
+      `;
+    }
+
+    function showExtensionNotFound(email) {
+      content.innerHTML = `
+        <div class="user-info">Logged in as: <strong>${email}</strong></div>
+        <div class="extension-icon">🧩</div>
+        <div class="status info">Clippo extension not detected</div>
+        <p style="margin: 20px 0; color: var(--text-secondary); font-size: 14px;">
+          Install the Chrome extension to access your clip archive
+        </p>
+        <div class="buttons">
+          <a href="#" class="btn btn-primary">Get Chrome Extension</a>
+          <button class="btn btn-secondary" onclick="tryConnect()">Retry Connection</button>
+        </div>
+      `;
+    }
+
+    function showConnecting(email) {
+      content.innerHTML = `
+        <div class="user-info">Logged in as: <strong>${email}</strong></div>
+        <div class="status loading">
+          <span class="spinner"></span>
+          Connecting to extension...
+        </div>
+      `;
+    }
+
+    function showSuccess(email) {
+      content.innerHTML = `
+        <div class="user-info">Logged in as: <strong>${email}</strong></div>
+        <div class="status success">Extension connected! Opening your archive...</div>
+      `;
+    }
+
+    function tryConnect() {
+      const userId = localStorage.getItem('clippo_user_id');
+      const userEmail = localStorage.getItem('clippo_user_email') || 'User';
+
+      if (!userId) {
+        showNotLoggedIn();
+        return;
+      }
+
+      showConnecting(userEmail);
+
+      // Try to connect to extension
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        try {
+          chrome.runtime.sendMessage(
+            EXTENSION_ID,
+            { action: 'openArchive', userId: userId, userEmail: userEmail },
+            response => {
+              if (chrome.runtime.lastError) {
+                console.log('Extension error:', chrome.runtime.lastError.message);
+                showExtensionNotFound(userEmail);
+              } else if (response && response.success) {
+                showSuccess(userEmail);
+              } else {
+                showExtensionNotFound(userEmail);
+              }
+            }
+          );
+
+          // Timeout fallback
+          setTimeout(() => {
+            if (content.innerHTML.includes('Connecting')) {
+              showExtensionNotFound(userEmail);
+            }
+          }, 3000);
+
+        } catch (e) {
+          console.log('Extension error:', e);
+          showExtensionNotFound(userEmail);
+        }
+      } else {
+        showExtensionNotFound(userEmail);
+      }
+    }
+
+    async function init() {
+      // Check URL params first (from login redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      const uid = urlParams.get('uid');
+
+      if (uid) {
+        localStorage.setItem('clippo_user_id', uid);
+      }
+
+      // Check localStorage for existing login
+      const userId = localStorage.getItem('clippo_user_id');
+
+      if (userId) {
+        tryConnect();
+      } else {
+        // Try Supabase session
+        try {
+          const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
+          const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
+
+          if (window.supabase) {
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session?.user) {
+              localStorage.setItem('clippo_user_id', session.user.id);
+              localStorage.setItem('clippo_user_email', session.user.email);
+              tryConnect();
+              return;
+            }
+          }
+        } catch (e) {
+          console.log('Supabase error:', e);
+        }
+
+        showNotLoggedIn();
+      }
+    }
+
+    // Start after page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>

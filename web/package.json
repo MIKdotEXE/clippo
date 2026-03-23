@@ -1,0 +1,10 @@
+{
+  "name": "videomark-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx http-server",
+    "build": "echo 'Static site'",
+    "start": "npx http-server"
+  }
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Logging out...</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <p>Logging out...</p>
+  <script>
+    const supabaseClient = supabase.createClient(
+      'https://phnfwoqyyqnqmmteygnb.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc'
+    );
+
+    supabaseClient.auth.signOut().then(() => {
+      localStorage.removeItem('clippo_user_id');
+      localStorage.removeItem('clippo_user_email');
+      document.body.innerHTML = '<p>Logged out successfully</p>';
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "manifest_version": 3,
+  "name": "Clippo",
+  "version": "1.0.0",
+  "description": "Save YouTube video clips for easy review.",
+  "icons": {
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png",
+    "256": "images/icon_256.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://*.supabase.co/*"
+  ],
+  "externally_connectable": {
+    "matches": [
+      "https://clippo.app/*",
+      "https://*.clippo.app/*",
+      "http://localhost/*",
+      "http://127.0.0.1/*"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' chrome-extension: data: https:"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icon.png"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": {
+      "16": "images/icon_16.png",
+      "48": "images/icon_48.png",
+      "128": "images/icon_128.png",
+      "256": "images/icon_256.png"
+      
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/watch*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "commands": {
+    "toggle-widget": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Toggle Clippo widget on YouTube"
+    }
+  }
+}

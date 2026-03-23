@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clippo Player</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #000; }
+    #player { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    // Parse URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get('v');
+    const startTime = parseInt(params.get('start')) || 0;
+    const endTime = parseInt(params.get('end')) || 0;
+    const clipId = params.get('clipId') || '';
+
+    let player = null;
+    let checkInterval = null;
+
+    // Clear any existing content
+    document.getElementById('player').innerHTML = '';
+
+    function onYouTubeIframeAPIReady() {
+      // Destroy existing player if any
+      if (player && player.destroy) {
+        player.destroy();
+        player = null;
+      }
+
+      // Clear the container
+      document.getElementById('player').innerHTML = '';
+
+      player = new YT.Player('player', {
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          start: startTime,
+          controls: 1,
+          modestbranding: 1,
+          rel: 0,
+          fs: 1
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      event.target.playVideo();
+
+      // Start monitoring for end time
+      if (endTime > startTime) {
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(() => {
+          if (player && player.getCurrentTime) {
+            const currentTime = player.getCurrentTime();
+            if (currentTime >= endTime) {
+              player.pauseVideo();
+              clearInterval(checkInterval);
+
+              // Notify parent (extension archive) that clip ended
+              window.parent.postMessage({
+                type: 'videoEnded',
+                clipId: clipId
+              }, '*');
+            }
+          }
+        }, 250);
+      }
+    }
+
+    function onPlayerStateChange(event) {
+      // If video ended naturally, also notify parent
+      if (event.data === YT.PlayerState.ENDED) {
+        window.parent.postMessage({
+          type: 'videoEnded',
+          clipId: clipId
+        }, '*');
+      }
+    }
+
+    // Load YouTube IFrame API
+    // Check if API is already loaded (happens on page reload in iframe)
+    if (window.YT && window.YT.Player) {
+      // API already loaded, manually trigger ready
+      onYouTubeIframeAPIReady();
+    } else {
+      // Load the API script
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (checkInterval) clearInterval(checkInterval);
+      if (player && player.destroy) player.destroy();
+    });
+  </script>
+</body>
+</html>

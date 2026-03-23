@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy Policy - Clippo">
+  <link rel="icon" type="image/png" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png">
+  <title>Privacy Policy - Clippo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-primary: #ed1c24;
+      --brand-dark: #c41920;
+      --brand-light: #ff3b42;
+      --bg-white: #ffffff;
+      --bg-light: #fafafa;
+      --border-light: rgba(237, 28, 36, 0.12);
+      --border-medium: rgba(237, 28, 36, 0.25);
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #7a7a7a;
+      --text-on-brand: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Zain', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .header-logo-icon {
+      height: 36px;
+    }
+
+    .header-logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .header-nav a {
+      font-family: 'Zain', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+      background: transparent;
+    }
+
+    .header-nav a:hover {
+      color: var(--brand-primary);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 40px 24px 60px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--bg-white);
+      padding: 48px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-light);
+    }
+
+    h1 {
+      font-family: 'Zain', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    h2 {
+      font-family: 'Zain', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      margin-top: 36px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    li {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    li strong {
+      color: var(--text-primary);
+    }
+
+    a {
+      color: var(--brand-primary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--brand-dark);
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      padding: 32px 24px;
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-light);
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-logo-icon {
+      height: 28px;
+    }
+
+    .footer-logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand-primary);
+      text-decoration: none;
+    }
+
+    .copyright {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 32px 24px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 24px 16px 40px;
+      }
+
+      .container {
+        padding: 24px 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="/" class="header-logo">
+        <div class="header-logo-icon">
+          <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo_h.png" alt="Clippo Logo">
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      <h1>Privacy Policy</h1>
+      <p class="last-updated">Last updated: December 29, 2024</p>
+
+      <h2>1. Introduction</h2>
+      <p>Clippo ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our Chrome extension.</p>
+
+      <h2>2. Information We Collect</h2>
+      <p>Clippo collects only the minimum data necessary to provide its core functionality:</p>
+      <ul>
+        <li><strong>Authentication Data:</strong> Email address, password (hashed and managed by Supabase), access tokens, and refresh tokens</li>
+        <li><strong>User-Generated Content:</strong> YouTube video IDs, clip titles, timestamps (start/end times), category names, and category icons</li>
+        <li><strong>Extension Usage:</strong> Interaction with the extension itself (stored locally on your device)</li>
+      </ul>
+
+      <h2>3. How We Use Your Information</h2>
+      <p>We use your information solely for:</p>
+      <ul>
+        <li>User authentication and account management</li>
+        <li>Storing and organizing your saved clips</li>
+        <li>Syncing your clips across devices (if logged in)</li>
+        <li>Providing access to your clips via clippo.app</li>
+      </ul>
+
+      <h2>4. Data Storage and Security</h2>
+      <p>Your data is stored securely in Supabase (a PostgreSQL-based backend service) with:</p>
+      <ul>
+        <li>Encrypted connections (HTTPS/TLS)</li>
+        <li>Row-level security policies (you can only access your own data)</li>
+        <li>Regular security updates and backups</li>
+      </ul>
+      <p>The extension also stores clips locally in your browser using Chrome's storage API.</p>
+
+      <h2>5. Data Sharing</h2>
+      <p>We do <strong>NOT</strong>:</p>
+      <ul>
+        <li>Sell or share your data with third parties</li>
+        <li>Use your data for advertising or marketing</li>
+        <li>Share your clips with other users unless you choose to</li>
+        <li>Track your browsing history or behavior outside the extension</li>
+      </ul>
+      <p>We only share data with Supabase (our backend provider) as necessary to store and sync your clips.</p>
+
+      <h2>6. Your Rights</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access all your data stored in your account</li>
+        <li>Delete your account and all associated data at any time</li>
+        <li>Export your clips</li>
+      </ul>
+
+      <h2>7. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. We'll notify you of any significant changes by updating the "Last updated" date at the top of this page.</p>
+
+      <h2>8. Contact Us</h2>
+      <p>If you have questions about this Privacy Policy or our privacy practices, contact us at: <strong>support@clippo.app</strong></p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">
+          <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo_h.png" alt="Clippo Logo">
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/privacy/">Privacy Policy</a>
+      </div>
+      <p class="copyright">&copy; 2024 Clippo</p>
+    </div>
+  </footer>
+</body>
+</html>
