@@ -137,6 +137,66 @@ function createWidget(video) {
         50% { box-shadow: 0 0 0 8px rgba(237, 28, 36, 0); }
       }
 
+      #clippo-overlay-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: rgba(237, 28, 36, 0.7);
+        border: none;
+        cursor: pointer;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.5;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        padding: 0;
+      }
+
+      #clippo-overlay-btn:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      #clippo-overlay-btn img {
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+      }
+
+      .vm-video-controls {
+        display: flex;
+        gap: 6px;
+        margin: 4px 0 8px;
+      }
+
+      .vm-video-controls button {
+        flex: 1;
+        padding: 6px 4px;
+        background: ${COLORS.bgLight};
+        border: 1px solid ${COLORS.borderLight};
+        border-radius: 6px;
+        color: ${COLORS.textSecondary};
+        font-family: 'Zain', sans-serif !important;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+      }
+
+      .vm-video-controls button:hover {
+        background: ${COLORS.brandPrimary};
+        border-color: ${COLORS.brandPrimary};
+        color: ${COLORS.textOnBrand};
+      }
+
       #clippo-widget, #clippo-widget * {
         font-family: 'Zain', sans-serif !important;
         box-sizing: border-box;
@@ -452,6 +512,32 @@ function createWidget(video) {
   });
 
   document.body.appendChild(widget);
+
+  // Add overlay button on YouTube video player
+  if (!document.getElementById("clippo-overlay-btn")) {
+    const addOverlayBtn = () => {
+      const playerContainer = document.querySelector("#movie_player") || document.querySelector(".html5-video-player");
+      if (!playerContainer) {
+        setTimeout(addOverlayBtn, 500);
+        return;
+      }
+      // Ensure container is positioned for absolute children
+      if (getComputedStyle(playerContainer).position === "static") {
+        playerContainer.style.position = "relative";
+      }
+      const btn = document.createElement("button");
+      btn.id = "clippo-overlay-btn";
+      btn.title = "Open Clippo";
+      btn.innerHTML = `<img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48_n.png" alt="Clippo"/>`;
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        toggleWidget();
+      });
+      playerContainer.appendChild(btn);
+    };
+    addOverlayBtn();
+  }
 }
 
 function setupLogoFallback() {
@@ -568,6 +654,12 @@ function renderClipForm() {
       </div>
     </div>
     <div id="vm-duration" class="vm-duration"></div>
+
+    <div class="vm-video-controls">
+      <button id="vm-back5" title="Back 5 seconds">◀ 5s</button>
+      <button id="vm-playpause" title="Play/Pause">⏯ Play</button>
+      <button id="vm-fwd5" title="Forward 5 seconds">5s ▶</button>
+    </div>
 
     <div class="vm-actions">
       <button class="vm-btn-primary" id="vm-save">Save Clip</button>
@@ -825,6 +917,27 @@ function bindWidget(video) {
   $("vm-start").addEventListener("input", updateDuration);
   $("vm-end").addEventListener("input", updateDuration);
 
+  // Video playback controls
+  const ppBtn = $("vm-playpause");
+  $("vm-back5").addEventListener("click", () => {
+    video.currentTime = Math.max(0, video.currentTime - 5);
+  });
+  $("vm-fwd5").addEventListener("click", () => {
+    video.currentTime = Math.min(video.duration, video.currentTime + 5);
+  });
+  ppBtn.addEventListener("click", () => {
+    if (video.paused) {
+      video.play();
+      ppBtn.textContent = "⏸ Pause";
+    } else {
+      video.pause();
+      ppBtn.textContent = "▶ Play";
+    }
+  });
+  // Sync button text with video state
+  video.addEventListener("play", () => { ppBtn.textContent = "⏸ Pause"; });
+  video.addEventListener("pause", () => { ppBtn.textContent = "▶ Play"; });
+
   $("vm-save").addEventListener("click", () => {
     const title = $("vm-title").value.trim();
     const macro = $("vm-macro").value.trim() || "Others";
@@ -879,7 +992,7 @@ function bindWidget(video) {
                 return;
               }
               if (resp?.success) {
-                // Show success feedback and auto-hide widget
+                // Show success feedback (widget stays open)
                 const saveBtn = $("vm-save");
                 const origText = saveBtn.textContent;
                 saveBtn.textContent = "✓ Saved!";
@@ -891,8 +1004,6 @@ function bindWidget(video) {
                 setTimeout(() => {
                   saveBtn.textContent = origText;
                   saveBtn.style.background = "";
-                  isVisible = false;
-                  widget.style.display = "none";
                 }, 1200);
               } else {
                 alert("Error saving clip");

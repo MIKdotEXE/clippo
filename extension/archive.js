@@ -549,12 +549,17 @@ document.addEventListener("DOMContentLoaded", () => {
       // Share button
       card.querySelector(".btn-share")?.addEventListener("click", () => {
         const playerUrl = `https://clippo.app/player/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}`;
-        const shareText = `${clip.title} - Clippo Clip`;
+        const shareTitle = `${clip.title}`;
+        const shareBody = `Check out this clip: "${clip.title}" — saved with Clippo\n${playerUrl}`;
 
         if (navigator.share) {
-          navigator.share({ title: shareText, url: playerUrl }).catch(() => {});
+          navigator.share({
+            title: shareTitle,
+            text: `Check out this clip: "${clip.title}" — saved with Clippo`,
+            url: playerUrl
+          }).catch(() => {});
         } else {
-          navigator.clipboard.writeText(playerUrl).then(() => {
+          navigator.clipboard.writeText(shareBody).then(() => {
             const btn = card.querySelector(".btn-share");
             const origHTML = btn.innerHTML;
             btn.textContent = "Copied!";

@@ -4,14 +4,120 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clippo Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; }
+    html, body { width: 100%; height: 100%; background: #000; font-family: 'Zain', sans-serif; }
     #player { width: 100%; height: 100%; }
+
+    #clip-ended-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    #clip-ended-overlay.show {
+      display: flex;
+    }
+
+    .overlay-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .overlay-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+
+    .overlay-logo span {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ed1c24;
+      letter-spacing: 2px;
+    }
+
+    .overlay-btn {
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Zain', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .overlay-btn-primary {
+      background: linear-gradient(135deg, #ed1c24, #c41920);
+      color: #fff;
+    }
+
+    .overlay-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
+    }
+
+    .overlay-tagline {
+      color: #aaa;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .overlay-tagline a {
+      color: #ed1c24;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .overlay-tagline a:hover {
+      text-decoration: underline;
+    }
+
+    .overlay-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .overlay-links a {
+      color: #888;
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .overlay-links a:hover {
+      color: #ed1c24;
+    }
   </style>
 </head>
 <body>
   <div id="player"></div>
+
+  <div id="clip-ended-overlay">
+    <div class="overlay-logo">
+      <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo"/>
+      <span>Clippo</span>
+    </div>
+    <button class="overlay-btn overlay-btn-primary" id="rewatch-btn">Watch Again</button>
+    <p class="overlay-tagline">Save your favorite YouTube moments with <a href="https://clippo.app" target="_blank">Clippo</a></p>
+    <div class="overlay-links">
+      <a href="https://clippo.app" target="_blank">clippo.app</a>
+      <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" target="_blank">Get the Extension</a>
+    </div>
+  </div>
 
   <script>
     // Parse URL parameters
@@ -23,9 +129,19 @@
 
     let player = null;
     let checkInterval = null;
+    const overlay = document.getElementById('clip-ended-overlay');
 
     // Clear any existing content
     document.getElementById('player').innerHTML = '';
+
+    function showEndOverlay() {
+      overlay.classList.add('show');
+      // Notify parent (extension archive) that clip ended
+      window.parent.postMessage({
+        type: 'videoEnded',
+        clipId: clipId
+      }, '*');
+    }
 
     function onYouTubeIframeAPIReady() {
       // Destroy existing player if any
@@ -66,12 +182,7 @@
             if (currentTime >= endTime) {
               player.pauseVideo();
               clearInterval(checkInterval);
-
-              // Notify parent (extension archive) that clip ended
-              window.parent.postMessage({
-                type: 'videoEnded',
-                clipId: clipId
-              }, '*');
+              showEndOverlay();
             }
           }
         }, 250);
@@ -79,14 +190,34 @@
     }
 
     function onPlayerStateChange(event) {
-      // If video ended naturally, also notify parent
+      // If video ended naturally, also show overlay
       if (event.data === YT.PlayerState.ENDED) {
-        window.parent.postMessage({
-          type: 'videoEnded',
-          clipId: clipId
-        }, '*');
+        showEndOverlay();
       }
     }
+
+    // Rewatch button
+    document.getElementById('rewatch-btn').addEventListener('click', () => {
+      overlay.classList.remove('show');
+      if (player && player.seekTo) {
+        player.seekTo(startTime, true);
+        player.playVideo();
+
+        // Re-start monitoring for end time
+        if (endTime > startTime) {
+          if (checkInterval) clearInterval(checkInterval);
+          checkInterval = setInterval(() => {
+            if (player && player.getCurrentTime) {
+              if (player.getCurrentTime() >= endTime) {
+                player.pauseVideo();
+                clearInterval(checkInterval);
+                showEndOverlay();
+              }
+            }
+          }, 250);
+        }
+      }
+    });
 
     // Load YouTube IFrame API
     // Check if API is already loaded (happens on page reload in iframe)
