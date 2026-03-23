@@ -1,129 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clippo Player</title>
+  <title>Clippo — Watch Clip</title>
+  <link rel="icon" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #000; font-family: 'Zain', sans-serif; }
-    #player { width: 100%; height: 100%; }
 
-    #clip-ended-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 10000;
+    body {
+      font-family: 'Zain', sans-serif;
+      background: linear-gradient(135deg, #1a0506 0%, #2d0a0b 50%, #1a0506 100%);
+      min-height: 100vh;
+      display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 20px;
-      text-align: center;
+      color: #fff;
     }
 
-    #clip-ended-overlay.show {
-      display: flex;
-    }
-
-    .overlay-logo {
+    /* Header */
+    .player-header {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      padding: 24px 0 16px;
     }
 
-    .overlay-logo img {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
+    .player-header svg {
+      flex-shrink: 0;
     }
 
-    .overlay-logo span {
-      font-size: 28px;
+    .player-header span {
+      font-size: 24px;
       font-weight: 800;
       color: #ed1c24;
       letter-spacing: 2px;
     }
 
-    .overlay-btn {
-      padding: 14px 32px;
+    /* Video Container */
+    .video-section {
+      width: 100%;
+      max-width: 854px;
+      padding: 0 20px;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(237, 28, 36, 0.25), 0 0 0 1px rgba(237, 28, 36, 0.15);
+    }
+
+    .video-frame #player {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Time badge */
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 14px;
+      background: rgba(237, 28, 36, 0.15);
+      border: 1px solid rgba(237, 28, 36, 0.3);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ff6b6f;
+      letter-spacing: 0.5px;
+    }
+
+    .time-badge svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Branding Section */
+    .branding {
+      text-align: center;
+      padding: 28px 20px 40px;
+      max-width: 500px;
+    }
+
+    .branding-tagline {
+      font-size: 16px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 16px;
+    }
+
+    .branding-tagline strong {
+      color: #ed1c24;
+    }
+
+    .branding-description {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .branding-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: 'Zain', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ed1c24, #c41920);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .btn-cta svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Rewatch overlay */
+    #rewatch-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      border-radius: 14px;
+    }
+
+    #rewatch-overlay.show {
+      display: flex;
+    }
+
+    #rewatch-overlay p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .btn-rewatch {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #ed1c24, #c41920);
       border: none;
       border-radius: 10px;
+      color: #fff;
       font-family: 'Zain', sans-serif;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
-      letter-spacing: 0.5px;
     }
 
-    .overlay-btn-primary {
-      background: linear-gradient(135deg, #ed1c24, #c41920);
-      color: #fff;
-    }
-
-    .overlay-btn-primary:hover {
+    .btn-rewatch:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
-    }
-
-    .overlay-tagline {
-      color: #aaa;
-      font-size: 13px;
-      margin-top: 12px;
-    }
-
-    .overlay-tagline a {
-      color: #ed1c24;
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .overlay-tagline a:hover {
-      text-decoration: underline;
-    }
-
-    .overlay-links {
-      display: flex;
-      gap: 16px;
-      margin-top: 4px;
-    }
-
-    .overlay-links a {
-      color: #888;
-      font-size: 12px;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .overlay-links a:hover {
-      color: #ed1c24;
     }
   </style>
 </head>
 <body>
-  <div id="player"></div>
 
-  <div id="clip-ended-overlay">
-    <div class="overlay-logo">
-      <svg width="40" height="40" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <rect width="48" height="48" rx="10" fill="#ed1c24"/>
-        <path d="M18 14v20l16-10z" fill="white"/>
-      </svg>
-      <span>Clippo</span>
+  <!-- Header -->
+  <div class="player-header">
+    <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="10" fill="#ed1c24"/>
+      <path d="M18 14v20l16-10z" fill="white"/>
+    </svg>
+    <span>Clippo</span>
+  </div>
+
+  <!-- Video -->
+  <div class="video-section">
+    <div class="video-frame">
+      <div id="player"></div>
+      <div id="rewatch-overlay">
+        <p>Clip ended</p>
+        <button class="btn-rewatch" id="rewatch-btn">Watch Again</button>
+      </div>
     </div>
-    <button class="overlay-btn overlay-btn-primary" id="rewatch-btn">Watch Again</button>
-    <p class="overlay-tagline">Save your favorite YouTube moments with <a href="https://clippo.app" target="_blank">Clippo</a></p>
-    <div class="overlay-links">
-      <a href="https://clippo.app" target="_blank">clippo.app</a>
-      <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" target="_blank">Get the Extension</a>
+    <div style="text-align: center;">
+      <span class="time-badge" id="time-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span id="time-range"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <p class="branding-tagline">Clip saved with <strong>Clippo</strong></p>
+    <p class="branding-description">Save your favorite YouTube moments, organize them, and share with anyone.</p>
+    <div class="branding-actions">
+      <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" target="_blank" class="btn-cta btn-primary">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Get Clippo — It's Free
+      </a>
+      <a href="https://clippo.app" target="_blank" class="btn-cta btn-secondary">
+        Learn More
+      </a>
     </div>
   </div>
 
   <script>
-    // Parse URL parameters
     const params = new URLSearchParams(window.location.search);
     const videoId = params.get('v');
     const startTime = parseInt(params.get('start')) || 0;
@@ -132,28 +248,47 @@
 
     let player = null;
     let checkInterval = null;
-    const overlay = document.getElementById('clip-ended-overlay');
+    const rewatchOverlay = document.getElementById('rewatch-overlay');
 
-    // Clear any existing content
-    document.getElementById('player').innerHTML = '';
+    // Show time range
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return m + ':' + String(sec).padStart(2, '0');
+    }
+
+    const timeRange = document.getElementById('time-range');
+    if (endTime > startTime) {
+      timeRange.textContent = `${formatTime(startTime)} — ${formatTime(endTime)}`;
+    } else {
+      timeRange.textContent = `From ${formatTime(startTime)}`;
+    }
 
     function showEndOverlay() {
-      overlay.classList.add('show');
-      // Notify parent (extension archive) that clip ended
-      window.parent.postMessage({
-        type: 'videoEnded',
-        clipId: clipId
-      }, '*');
+      rewatchOverlay.classList.add('show');
+      window.parent.postMessage({ type: 'videoEnded', clipId: clipId }, '*');
+    }
+
+    function startMonitoring() {
+      if (endTime > startTime) {
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(() => {
+          if (player && player.getCurrentTime) {
+            if (player.getCurrentTime() >= endTime) {
+              player.pauseVideo();
+              clearInterval(checkInterval);
+              showEndOverlay();
+            }
+          }
+        }, 250);
+      }
     }
 
     function onYouTubeIframeAPIReady() {
-      // Destroy existing player if any
       if (player && player.destroy) {
         player.destroy();
         player = null;
       }
-
-      // Clear the container
       document.getElementById('player').innerHTML = '';
 
       player = new YT.Player('player', {
@@ -167,74 +302,33 @@
           fs: 1
         },
         events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
+          'onReady': (e) => { e.target.playVideo(); startMonitoring(); },
+          'onStateChange': (e) => {
+            if (e.data === YT.PlayerState.ENDED) showEndOverlay();
+          }
         }
       });
     }
 
-    function onPlayerReady(event) {
-      event.target.playVideo();
-
-      // Start monitoring for end time
-      if (endTime > startTime) {
-        if (checkInterval) clearInterval(checkInterval);
-        checkInterval = setInterval(() => {
-          if (player && player.getCurrentTime) {
-            const currentTime = player.getCurrentTime();
-            if (currentTime >= endTime) {
-              player.pauseVideo();
-              clearInterval(checkInterval);
-              showEndOverlay();
-            }
-          }
-        }, 250);
-      }
-    }
-
-    function onPlayerStateChange(event) {
-      // If video ended naturally, also show overlay
-      if (event.data === YT.PlayerState.ENDED) {
-        showEndOverlay();
-      }
-    }
-
-    // Rewatch button
+    // Rewatch
     document.getElementById('rewatch-btn').addEventListener('click', () => {
-      overlay.classList.remove('show');
+      rewatchOverlay.classList.remove('show');
       if (player && player.seekTo) {
         player.seekTo(startTime, true);
         player.playVideo();
-
-        // Re-start monitoring for end time
-        if (endTime > startTime) {
-          if (checkInterval) clearInterval(checkInterval);
-          checkInterval = setInterval(() => {
-            if (player && player.getCurrentTime) {
-              if (player.getCurrentTime() >= endTime) {
-                player.pauseVideo();
-                clearInterval(checkInterval);
-                showEndOverlay();
-              }
-            }
-          }, 250);
-        }
+        startMonitoring();
       }
     });
 
     // Load YouTube IFrame API
-    // Check if API is already loaded (happens on page reload in iframe)
     if (window.YT && window.YT.Player) {
-      // API already loaded, manually trigger ready
       onYouTubeIframeAPIReady();
     } else {
-      // Load the API script
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.head.appendChild(tag);
     }
 
-    // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
       if (checkInterval) clearInterval(checkInterval);
       if (player && player.destroy) player.destroy();
