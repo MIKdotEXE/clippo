@@ -1298,6 +1298,12 @@
       cycle();
     })();
 
+    // ═══ RECOVERY REDIRECT ═══
+    // If landing page receives a recovery hash, redirect to reset page
+    if (window.location.hash && window.location.hash.includes('type=recovery')) {
+      window.location.href = '/auth/reset/' + window.location.hash;
+    }
+
     // ═══ THEME TOGGLE ═══
     const themeToggle = document.getElementById('themeToggle');
     themeToggle?.addEventListener('click', () => {

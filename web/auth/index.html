@@ -716,43 +716,38 @@
     // Handle password reset from email link (user arrives with access_token in URL hash)
     async function handlePasswordReset() {
       const hash = window.location.hash;
-      if (!hash || !hash.includes('type=recovery')) return;
 
-      // Wait for Supabase to process the token
-      if (!supabaseClient) return;
-
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-
-      const newPassword = prompt('Enter your new password (min 6 characters):');
-      if (!newPassword || newPassword.length < 6) {
-        alert('Password must be at least 6 characters.');
-        return;
+      // If recovery token in hash, redirect to dedicated reset page
+      if (hash && hash.includes('type=recovery')) {
+        window.location.href = '/auth/reset/' + hash;
+        return true; // signal to skip checkSession
       }
 
-      try {
-        const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
-        if (error) throw error;
-        alert('Password updated successfully!');
-        window.location.href = '/auth/';
-      } catch (error) {
-        alert('Error updating password: ' + error.message);
+      // If error in hash (expired link etc), show message
+      if (hash && hash.includes('error=')) {
+        const params = new URLSearchParams(hash.substring(1));
+        const errorDesc = params.get('error_description') || 'An error occurred';
+        showMessage(loginMessage, errorDesc.replace(/\+/g, ' '), 'error');
+        window.location.hash = '';
+        return true;
       }
+
+      return false;
     }
 
     // Initialize on page load
-    function init() {
+    async function init() {
       console.log('Initializing auth page...');
 
       if (initSupabase()) {
-        handlePasswordReset();
-        checkSession();
+        const isRecovery = await handlePasswordReset();
+        if (!isRecovery) checkSession();
       } else {
         // Retry after a short delay
-        setTimeout(() => {
+        setTimeout(async () => {
           if (initSupabase()) {
-            handlePasswordReset();
-            checkSession();
+            const isRecovery = await handlePasswordReset();
+            if (!isRecovery) checkSession();
           } else {
             showMessage(loginMessage, 'Failed to load authentication service. Please refresh.', 'error');
           }
