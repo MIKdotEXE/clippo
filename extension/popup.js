@@ -224,10 +224,12 @@ document.getElementById('settings-btn').addEventListener('click', () => {
   window.close();
 });
 
-// Google OAuth - opens web auth page
-document.getElementById('google-btn').addEventListener('click', () => {
-  chrome.tabs.create({ url: 'https://clippo.app/auth/?google=1' });
-  window.close();
+// OAuth buttons - open web auth page with provider param
+['google', 'github', 'discord'].forEach(provider => {
+  document.getElementById(`${provider}-btn`)?.addEventListener('click', () => {
+    chrome.tabs.create({ url: `https://clippo.app/auth/?${provider}=1` });
+    window.close();
+  });
 });
 
 // Forgot password
