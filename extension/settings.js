@@ -69,47 +69,86 @@ document.getElementById('setting-username').addEventListener('input', (e) => {
   }, 500);
 });
 
-// Change password — send reset email directly
-document.getElementById('change-password-btn').addEventListener('click', async () => {
+// Change password — inline, no logout needed
+document.getElementById('change-password-btn').addEventListener('click', () => {
   const btn = document.getElementById('change-password-btn');
+  const row = btn.closest('.setting-row');
 
-  chrome.storage.local.get(['clippo_user_email'], async (data) => {
-    const email = data.clippo_user_email;
-    if (!email) {
-      alert('No email found. Please log in first.');
+  // Check if form is already open
+  if (row.querySelector('.pw-form')) {
+    row.querySelector('.pw-form').remove();
+    btn.textContent = 'Change';
+    return;
+  }
+
+  const form = document.createElement('div');
+  form.className = 'pw-form';
+  form.style.cssText = 'margin-top:12px;display:flex;flex-direction:column;gap:8px;width:100%;';
+  form.innerHTML = `
+    <input type="password" id="pw-new" placeholder="New password (min 8 chars)" style="padding:10px 12px;background:var(--bg-light);border:1px solid var(--border-light);border-radius:6px;font-family:inherit;font-size:13px;color:var(--text-primary);">
+    <input type="password" id="pw-confirm" placeholder="Confirm new password" style="padding:10px 12px;background:var(--bg-light);border:1px solid var(--border-light);border-radius:6px;font-family:inherit;font-size:13px;color:var(--text-primary);">
+    <button id="pw-save" style="padding:10px;background:var(--brand-primary);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">Update Password</button>
+    <div id="pw-msg" style="font-size:12px;display:none;"></div>
+  `;
+  row.appendChild(form);
+  btn.textContent = 'Cancel';
+
+  document.getElementById('pw-save').addEventListener('click', async () => {
+    const newPw = document.getElementById('pw-new').value;
+    const confirmPw = document.getElementById('pw-confirm').value;
+    const msg = document.getElementById('pw-msg');
+
+    if (newPw.length < 8) {
+      msg.style.display = 'block';
+      msg.style.color = '#ef4444';
+      msg.textContent = 'Password must be at least 8 characters';
+      return;
+    }
+    if (newPw !== confirmPw) {
+      msg.style.display = 'block';
+      msg.style.color = '#ef4444';
+      msg.textContent = 'Passwords do not match';
       return;
     }
 
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
+    const saveBtn = document.getElementById('pw-save');
+    saveBtn.textContent = 'Updating...';
+    saveBtn.disabled = true;
 
     try {
       const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
 
-      const redirectTo = encodeURIComponent('https://clippo.app/auth/reset/');
-      const response = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${redirectTo}`, {
-        method: 'POST',
+      const token = await new Promise(r => chrome.storage.local.get(['clippo_access_token'], d => r(d.clippo_access_token)));
+
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        method: 'PUT',
         headers: {
           'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ password: newPw })
       });
 
-      if (!response.ok) throw new Error('Failed to send');
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to update password');
+      }
 
-      btn.textContent = 'Email sent!';
+      msg.style.display = 'block';
+      msg.style.color = '#22c55e';
+      msg.textContent = 'Password updated!';
       setTimeout(() => {
-        btn.textContent = 'Reset';
-        btn.disabled = false;
-      }, 3000);
-    } catch (e) {
-      btn.textContent = 'Failed';
-      setTimeout(() => {
-        btn.textContent = 'Reset';
-        btn.disabled = false;
+        form.remove();
+        btn.textContent = 'Change';
       }, 2000);
+    } catch (e) {
+      msg.style.display = 'block';
+      msg.style.color = '#ef4444';
+      msg.textContent = e.message;
+      saveBtn.textContent = 'Update Password';
+      saveBtn.disabled = false;
     }
   });
 });
