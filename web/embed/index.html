@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clippo Embed</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+    #player { width: 100%; height: 100%; }
+
+    #ended-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #ended-overlay.show { display: flex; }
+
+    #ended-overlay p {
+      color: #f4f4f5;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .btn-rewatch {
+      padding: 11px 26px;
+      background: #7c3aed;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-rewatch:hover {
+      background: #6d28d9;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+  <div id="ended-overlay">
+    <p>Clip ended</p>
+    <button class="btn-rewatch" id="rewatch-btn">Watch Again</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get('v');
+    const startTime = parseInt(params.get('start')) || 0;
+    const endTime = parseInt(params.get('end')) || 0;
+    const clipId = params.get('clipId') || '';
+
+    let player = null;
+    let checkInterval = null;
+    const overlay = document.getElementById('ended-overlay');
+
+    function showEndOverlay() {
+      overlay.classList.add('show');
+      try { window.parent.postMessage({ type: 'videoEnded', clipId: clipId }, '*'); } catch(e){}
+    }
+
+    function startMonitoring() {
+      if (endTime > startTime) {
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(() => {
+          if (player && player.getCurrentTime && player.getCurrentTime() >= endTime) {
+            player.pauseVideo();
+            clearInterval(checkInterval);
+            showEndOverlay();
+          }
+        }, 250);
+      }
+    }
+
+    function onYouTubeIframeAPIReady() {
+      if (player && player.destroy) { player.destroy(); player = null; }
+      document.getElementById('player').innerHTML = '';
+
+      player = new YT.Player('player', {
+        videoId: videoId,
+        playerVars: { autoplay: 1, start: startTime, controls: 1, modestbranding: 1, rel: 0, fs: 1 },
+        events: {
+          'onReady': (e) => { e.target.playVideo(); startMonitoring(); },
+          'onStateChange': (e) => {
+            if (e.data === YT.PlayerState.ENDED) showEndOverlay();
+          }
+        }
+      });
+    }
+
+    document.getElementById('rewatch-btn').addEventListener('click', () => {
+      overlay.classList.remove('show');
+      if (player && player.seekTo) {
+        player.seekTo(startTime, true);
+        player.playVideo();
+        startMonitoring();
+      }
+    });
+
+    if (window.YT && window.YT.Player) {
+      onYouTubeIframeAPIReady();
+    } else {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (checkInterval) clearInterval(checkInterval);
+      if (player && player.destroy) player.destroy();
+    });
+  </script>
+</body>
+</html>

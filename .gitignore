@@ -21,6 +21,10 @@ Thumbs.db
 # Design assets (too large for git)
 assets/
 
+# Large media files (uncompressed originals)
+video_landing.mp4
+202604*.mp4
+
 # Old repo folders (to be deleted)
 VideoMark/
 UsersMichelevideomark-ext/

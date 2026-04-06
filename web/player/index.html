@@ -4,54 +4,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clippo — Watch Clip</title>
-  <link rel="icon" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="../ico_clippo.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Zain', sans-serif;
-      background: linear-gradient(135deg, #1a0506 0%, #2d0a0b 50%, #1a0506 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0f2e 50%, #0a0a0a 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #fff;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Header */
     .player-header {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 24px 0 16px;
+      padding: 28px 0 20px;
     }
 
-    .player-header svg {
-      flex-shrink: 0;
+    .player-header img {
+      height: 32px;
+      width: auto;
+      animation: logo-shimmer 3s ease-in-out infinite;
     }
 
-    .player-header span {
-      font-size: 24px;
-      font-weight: 800;
-      color: #ed1c24;
-      letter-spacing: 2px;
+    @keyframes logo-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.2) saturate(1.2); }
     }
 
-    /* Video Container */
     .video-section {
       width: 100%;
-      max-width: 854px;
+      max-width: 900px;
       padding: 0 20px;
     }
 
     .video-frame {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 */
-      border-radius: 14px;
+      padding-top: 56.25%;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 8px 40px rgba(237, 28, 36, 0.25), 0 0 0 1px rgba(237, 28, 36, 0.15);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(124, 58, 237, 0.3),
+        0 0 80px rgba(124, 58, 237, 0.15);
     }
 
     .video-frame #player {
@@ -61,55 +63,55 @@
       height: 100%;
     }
 
-    /* Time badge */
     .time-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin-top: 12px;
-      padding: 6px 14px;
-      background: rgba(237, 28, 36, 0.15);
-      border: 1px solid rgba(237, 28, 36, 0.3);
-      border-radius: 8px;
-      font-size: 13px;
+      margin-top: 14px;
+      padding: 7px 14px;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      border-radius: 100px;
+      font-size: 12px;
       font-weight: 700;
-      color: #ff6b6f;
+      color: #a78bfa;
       letter-spacing: 0.5px;
+      font-family: 'Plus Jakarta Sans', monospace;
     }
 
     .time-badge svg {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
     }
 
-    /* Branding Section */
     .branding {
       text-align: center;
-      padding: 28px 20px 40px;
-      max-width: 500px;
+      padding: 32px 20px 48px;
+      max-width: 540px;
     }
 
     .branding-tagline {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
     }
 
     .branding-tagline strong {
-      color: #ed1c24;
+      color: #a78bfa;
     }
 
     .branding-description {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.4);
-      margin-bottom: 24px;
-      line-height: 1.5;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 28px;
+      line-height: 1.6;
     }
 
     .branding-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -118,35 +120,37 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-family: 'Zain', sans-serif;
+      padding: 13px 26px;
+      border-radius: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #ed1c24, #c41920);
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
       color: #fff;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
+      box-shadow: 0 12px 32px rgba(124, 58, 237, 0.5);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .btn-cta svg {
@@ -154,56 +158,53 @@
       height: 16px;
     }
 
-    /* Rewatch overlay */
     #rewatch-overlay {
       display: none;
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
       z-index: 10;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 14px;
-      border-radius: 14px;
+      border-radius: 16px;
     }
 
-    #rewatch-overlay.show {
-      display: flex;
-    }
+    #rewatch-overlay.show { display: flex; }
 
     #rewatch-overlay p {
-      font-size: 14px;
-      color: rgba(255,255,255,0.6);
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
     }
 
     .btn-rewatch {
-      padding: 12px 28px;
-      background: linear-gradient(135deg, #ed1c24, #c41920);
+      padding: 13px 30px;
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: #fff;
-      font-family: 'Zain', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
     }
 
     .btn-rewatch:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.4);
+      box-shadow: 0 12px 32px rgba(124, 58, 237, 0.55);
     }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <div class="player-header">
-    <img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/clippo_logo.png" alt="Clippo" style="height: 40px; width: auto;">
+    <img src="../clippo_logo.svg" alt="Clippo">
   </div>
 
-  <!-- Video -->
   <div class="video-section">
     <div class="video-frame">
       <div id="player"></div>
@@ -220,13 +221,12 @@
     </div>
   </div>
 
-  <!-- Branding -->
   <div class="branding">
     <p class="branding-tagline">Clip saved with <strong>Clippo</strong></p>
     <p class="branding-description">Save your favorite YouTube moments, organize them, and share with anyone.</p>
     <div class="branding-actions">
       <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" target="_blank" class="btn-cta btn-primary">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
         Get Clippo — It's Free
       </a>
       <a href="https://clippo.app" target="_blank" class="btn-cta btn-secondary">
@@ -246,7 +246,6 @@
     let checkInterval = null;
     const rewatchOverlay = document.getElementById('rewatch-overlay');
 
-    // Show time range
     function formatTime(s) {
       const m = Math.floor(s / 60);
       const sec = s % 60;
@@ -262,7 +261,7 @@
 
     function showEndOverlay() {
       rewatchOverlay.classList.add('show');
-      window.parent.postMessage({ type: 'videoEnded', clipId: clipId }, '*');
+      try { window.parent.postMessage({ type: 'videoEnded', clipId: clipId }, '*'); } catch(e){}
     }
 
     function startMonitoring() {
@@ -281,22 +280,12 @@
     }
 
     function onYouTubeIframeAPIReady() {
-      if (player && player.destroy) {
-        player.destroy();
-        player = null;
-      }
+      if (player && player.destroy) { player.destroy(); player = null; }
       document.getElementById('player').innerHTML = '';
 
       player = new YT.Player('player', {
         videoId: videoId,
-        playerVars: {
-          autoplay: 1,
-          start: startTime,
-          controls: 1,
-          modestbranding: 1,
-          rel: 0,
-          fs: 1
-        },
+        playerVars: { autoplay: 1, start: startTime, controls: 1, modestbranding: 1, rel: 0, fs: 1 },
         events: {
           'onReady': (e) => { e.target.playVideo(); startMonitoring(); },
           'onStateChange': (e) => {
@@ -306,7 +295,6 @@
       });
     }
 
-    // Rewatch
     document.getElementById('rewatch-btn').addEventListener('click', () => {
       rewatchOverlay.classList.remove('show');
       if (player && player.seekTo) {
@@ -316,7 +304,6 @@
       }
     });
 
-    // Load YouTube IFrame API
     if (window.YT && window.YT.Player) {
       onYouTubeIframeAPIReady();
     } else {

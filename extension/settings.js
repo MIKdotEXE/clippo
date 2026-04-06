@@ -27,7 +27,7 @@ chrome.storage.local.get(
     // Theme
     const isDark = data.clippo_theme === 'dark';
     document.getElementById('setting-theme').checked = isDark;
-    if (isDark) document.body.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
 
     // Username
     const usernameEl = document.getElementById('setting-username');
@@ -55,7 +55,8 @@ for (const [elId, key] of Object.entries(toggleMap)) {
 // Theme toggle
 document.getElementById('setting-theme').addEventListener('change', (e) => {
   const theme = e.target.checked ? 'dark' : 'light';
-  document.body.classList.toggle('dark', e.target.checked);
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('clippo_theme', theme);
   chrome.storage.local.set({ clippo_theme: theme }, showSaved);
 });
 

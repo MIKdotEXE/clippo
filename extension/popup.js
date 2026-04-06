@@ -230,5 +230,79 @@ document.getElementById('google-btn').addEventListener('click', () => {
   window.close();
 });
 
+// Forgot password
+const resetForm = document.getElementById('reset-form');
+const resetBtn = document.getElementById('reset-btn');
+const resetMessage = document.getElementById('reset-message');
+
+document.getElementById('forgot-link').addEventListener('click', () => {
+  loginForm.style.display = 'none';
+  signupForm.style.display = 'none';
+  resetForm.style.display = 'block';
+  document.querySelector('.tabs').style.display = 'none';
+  clearMessages();
+  if (resetMessage) {
+    resetMessage.className = 'message';
+    resetMessage.textContent = '';
+  }
+});
+
+document.getElementById('back-to-login').addEventListener('click', () => {
+  resetForm.style.display = 'none';
+  loginForm.style.display = 'block';
+  document.querySelector('.tabs').style.display = 'flex';
+  loginTab.classList.add('active');
+  signupTab.classList.remove('active');
+  clearMessages();
+});
+
+resetForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  resetMessage.className = 'message';
+  resetMessage.textContent = '';
+
+  const email = document.getElementById('reset-email').value.trim();
+  if (!email) {
+    showMessage(resetMessage, 'Please enter your email', 'error');
+    return;
+  }
+
+  resetBtn.disabled = true;
+  resetBtn.textContent = 'Sending...';
+
+  try {
+    const redirectTo = encodeURIComponent('https://clippo.app/auth/reset/');
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${redirectTo}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || 'Failed to send reset link');
+    }
+
+    showMessage(resetMessage, 'Reset link sent! Check your email.', 'success');
+  } catch (error) {
+    showMessage(resetMessage, error.message, 'error');
+  } finally {
+    resetBtn.disabled = false;
+    resetBtn.textContent = 'Send Reset Link';
+  }
+});
+
+// Theme toggle
+document.getElementById('themeToggle')?.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('clippo_theme', next);
+  chrome.storage.local.set({ clippo_theme: next });
+});
+
 // Initialize
 checkAuth();

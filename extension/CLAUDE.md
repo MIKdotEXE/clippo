@@ -135,24 +135,61 @@ clippo/
 
 ## TODO
 
-### Pending
-- Ads in archive page (need AdSense account first)
-- Email confirmation on signup (Supabase dashboard config)
-- Google OAuth provider setup (Supabase dashboard config)
-- Check grafico generale (loghi, colori, consistenza UI)
-- Logo Clippo corretto nel player page
+### Pre-deploy checklist (testing UI)
+- [ ] Auth page (login/signup/forgot/Google/dark toggle) — http://localhost:3000/auth/
+- [ ] Reset password page — http://localhost:3000/auth/reset/
+- [ ] Logout page — http://localhost:3000/auth/logout/
+- [ ] Player condiviso (branded) — http://localhost:3000/player/?v=dQw4w9WgXcQ&start=10&end=20
+- [ ] Privacy page — http://localhost:3000/privacy/
+- [ ] Popup estensione (light/dark toggle) — chrome-extension://[ID]/popup.html
+- [ ] Widget YouTube (login, clip form, controls, overlay icon)
+- [ ] Archive estensione (sidebar, cards, video expand, dark/light toggle, close button)
+- [ ] Settings estensione (tutti i toggle + tema sync)
+
+### Pre-deploy: config Supabase dashboard
+- [ ] Site URL → `https://clippo.app`
+- [ ] Redirect URLs: add `https://clippo.app/auth/`, `https://clippo.app/auth/reset/`
+- [ ] Email templates: import HTML from `email-templates/` folder (confirm-signup, reset-password, magic-link)
+- [ ] Enable "Confirm email" in Authentication > Providers > Email
+
+### Pre-deploy: video & assets
+- [ ] Upload `demo.mp4` to Supabase Storage bucket `assets` → update URL in `web/index.html`
+- [ ] Verify `ico_clippo.svg` is accessible at `clippo.app/ico_clippo.svg` (used by email templates)
+
+### Deploy steps
+- [ ] Git commit all changes
+- [ ] Push to main → Vercel auto-deploys `web/`
+- [ ] Verify clippo.app landing, auth, player, embed, privacy, logout work
+- [ ] Pacchettizzare estensione: zip della cartella `extension/` (escludi CLAUDE.md, PROJECT_META.json)
+- [ ] Upload su Chrome Web Store con update text + screenshot nuova UI
+- [ ] Scrivere update text per Chrome Web Store listing (nuova UI viola, dark mode, ecc.)
+
+### Future features (post-deploy)
+- **Username system**: mostrare username al posto dell'email. Richiede:
+  - Tabella `profiles` su Supabase (id UUID → auth.users, username TEXT UNIQUE)
+  - Campo username obbligatorio in signup (web + estensione)
+  - Prompt "scegli username" al primo login per utenti esistenti
+  - Fix chiavi `videomark_user_*` → `clippo_user_*` in web/auth/index.html
+- **Changelog modal al primo login dopo update**: modal con nuove feature (nuova UI, dark mode, ecc.)
+- **Tasto "Buy me a coffee"**: bottone donazione nel footer landing (Buy Me a Coffee / Ko-fi / PayPal)
+- **Ads in archive page** (need AdSense account first)
 
 ### Completed
+- **UI redesign completo (2026-04-05/06)**: palette viola (#7c3aed), font Plus Jakarta Sans, shadows neutre, nuovo logo SVG, landing con hero asimmetrico + mockup browser animato + video demo + typewriter, badge Chrome Web Store
+- **Dark/Light theme globale**: toggle su tutte le pagine (landing, auth, popup, archive, settings), sync via chrome.storage + localStorage, theme-loader.js esterno (no inline script per CSP)
+- **Archive redesign**: sidebar neutro scuro, user avatar Gravatar, footer fixed con logo, FAB toggle tema, close button su video expanded, layout card expanded con metadata orizzontali
+- **Embed player**: nuova route `/embed/` per video YouTube minimale (usata dall'archive interno), separata dal branded player `/player/` per share link
+- **Reset password page**: `/auth/reset/` dedicata con form proper (non più prompt())
+- **Logout page redesign**: card centrata con spinner + check verde + redirect
 - Monorepo consolidation (VideoMark + videomark-web → clippo)
 - Player stop at end time (YouTube IFrame API)
 - Widget video controls (-5s, play/pause, +5s)
-- Overlay icon on YouTube video player
+- Overlay icon on YouTube video player (ora ico_clippo.svg, no background)
 - Share clips via Web Share API
 - Password reset / forgot password
 - Google OAuth button (widget, popup, web)
 - Settings page (overlay, auto-pause, controls, theme, username, password, delete account)
 - Settings accessible from widget gear icon and archive gear icon
-- Popup redesign (centered card layout matching web auth)
+- Popup redesign (centered card, logo full SVG, dark/light toggle)
 - Pause video on archive open
-- Branded shared clip player landing page
 - Security audit + XSS fix

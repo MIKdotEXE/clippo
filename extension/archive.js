@@ -68,6 +68,35 @@ document.addEventListener("DOMContentLoaded", () => {
     newMacroInput.value = "";
   });
 
+  // Manage categories toggle
+  const manageToggle = document.getElementById("manageToggle");
+  const addControls = document.getElementById("addControls");
+  const macroSelect = document.getElementById("newCategoryMacroSelect");
+
+  manageToggle.addEventListener("click", () => {
+    const isOpen = addControls.classList.contains("add-controls-visible");
+    if (isOpen) {
+      addControls.classList.remove("add-controls-visible");
+      addControls.classList.add("add-controls-hidden");
+      manageToggle.classList.remove("open");
+    } else {
+      addControls.classList.remove("add-controls-hidden");
+      addControls.classList.add("add-controls-visible");
+      manageToggle.classList.add("open");
+      updateMacroSelect();
+    }
+  });
+
+  function updateMacroSelect() {
+    macroSelect.innerHTML = "";
+    macroCats.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m;
+      macroSelect.appendChild(opt);
+    });
+  }
+
   // Add category
   addCategoryBtn.addEventListener("click", () => {
     const name = newCatInput.value.trim();
@@ -75,17 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (categories.some(c => c.name === name)) return alert("Category already exists");
 
     const iconUrl = newCatIconInput.value.trim();
-    // Validate icon URL if provided
     if (iconUrl && !iconUrl.startsWith('https://')) {
       return alert("Icon URL must start with https://");
     }
 
-    const macro = prompt(`Select macro for "${name}":\n${macroCats.join(", ")}`, macroCats[0] || "Others");
-    if (!macro) return;
-
-    if (!macroCats.includes(macro)) {
-      macroCats.push(macro);
-    }
+    const macro = macroSelect.value || "Others";
     categories.push({ name, icon: iconUrl || null, macro });
     saveCategories();
     newCatInput.value = "";
@@ -189,6 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarGroups.innerHTML = "";
 
     macroCats.forEach(macro => {
+      // Hide "Others" macro if no clips belong to it
+      if (macro === "Others") {
+        const othersClips = clips.filter(c => c.macro === "Others");
+        if (othersClips.length === 0) return;
+      }
+
       const details = document.createElement("details");
       const summary = document.createElement("summary");
       summary.className = "macro-summary";
@@ -250,6 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Categories under this macro
       const macroCategories = categories.filter(c => c.macro === macro);
       macroCategories.forEach(cat => {
+        // Hide "Others" in sidebar if no clips
+        const catClipCount = clips.filter(c => c.cat === cat.name).length;
+        if (cat.name === "Others" && catClipCount === 0) return;
+
         const item = document.createElement("div");
         item.className = "category-item";
         if (activeFilter?.type === "cat" && activeFilter.value === cat.name) {
@@ -354,6 +387,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     categories.forEach(cat => {
       const clipCount = clips.filter(c => c.cat === cat.name).length;
+
+      // Hide "Others" if it has no clips
+      if (cat.name === "Others" && clipCount === 0) return;
 
       const card = document.createElement("div");
       card.className = "category-card";
@@ -527,9 +563,9 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.add("expanded");
         expandedCardId = clip.id;
 
-        // Load video with cache-busting timestamp to prevent black screen
+        // Use clippo.app/embed/ (minimal YouTube player for inline archive)
         const iframe = card.querySelector("iframe");
-        iframe.src = `https://clippo.app/player/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}&clipId=${clip.id}&t=${Date.now()}`;
+        iframe.src = `https://clippo.app/embed/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}&clipId=${clip.id}&t=${Date.now()}`;
 
         // Scroll to card
         card.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -542,13 +578,12 @@ document.addEventListener("DOMContentLoaded", () => {
       card.querySelector(".btn-replay")?.addEventListener("click", () => {
         card.querySelector(".video-ended-overlay")?.classList.remove("show");
         const iframe = card.querySelector("iframe");
-        // Add timestamp to force reload
-        iframe.src = `https://clippo.app/player/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}&clipId=${clip.id}&t=${Date.now()}`;
+        iframe.src = `https://clippo.app/embed/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}&clipId=${clip.id}&t=${Date.now()}`;
       });
 
-      // Collapse button
-      card.querySelector(".btn-collapse")?.addEventListener("click", () => {
-        collapseCard(card);
+      // Collapse buttons (fixed close + "Close" in ended overlay)
+      card.querySelectorAll(".btn-collapse").forEach(btn => {
+        btn.addEventListener("click", () => collapseCard(card));
       });
 
       // Share button
@@ -643,6 +678,11 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
 
         <div class="video-container">
+          <button class="btn-close-video btn-collapse" title="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
           <div class="video-wrapper">
             <iframe src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clippo — Reset Password</title>
+  <link rel="icon" href="../../ico_clippo.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('clippo_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --brand-500: #7c3aed;
+      --brand-600: #6d28d9;
+    }
+
+    :root, :root[data-theme="light"] {
+      --bg-body:       #fafafa;
+      --bg-gradient:   linear-gradient(135deg, #fafafa 0%, #f5f3ff 100%);
+      --card-bg:       #ffffff;
+      --input-bg:      #fafafa;
+      --border:        rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.15);
+      --text-primary:  #18181b;
+      --text-secondary:#52525b;
+      --text-muted:    #a1a1aa;
+      --shadow-card:   0 8px 32px rgba(0,0,0,0.08);
+      --danger-bg:     rgba(239,68,68,0.08);
+      --success-bg:    rgba(34,197,94,0.08);
+    }
+
+    :root[data-theme="dark"] {
+      --bg-body:       #0a0a0a;
+      --bg-gradient:   linear-gradient(135deg, #0a0a0a 0%, #1a0f2e 100%);
+      --card-bg:       #141414;
+      --input-bg:      #1c1c1c;
+      --border:        rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.15);
+      --text-primary:  #f4f4f5;
+      --text-secondary:#a1a1aa;
+      --text-muted:    #71717a;
+      --shadow-card:   0 16px 40px rgba(0,0,0,0.6);
+      --danger-bg:     rgba(239,68,68,0.15);
+      --success-bg:    rgba(34,197,94,0.15);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .reset-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .logo {
+      display: block;
+      height: 24px;
+      width: auto;
+      margin: 0 auto 32px;
+      animation: logo-shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes logo-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15) saturate(1.2); }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      transition: all 0.15s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--brand-500);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--brand-500);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: var(--brand-600);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(124,58,237,0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .message {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: var(--danger-bg);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #dc2626;
+    }
+
+    .message.success {
+      display: block;
+      background: var(--success-bg);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #16a34a;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: var(--brand-500);
+      text-decoration: none;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="reset-card">
+    <img class="logo" src="../../clippo_logo.svg" alt="Clippo"/>
+
+    <h1>Reset your password</h1>
+    <p class="subtitle">Choose a new password for your Clippo account.</p>
+
+    <form id="reset-form">
+      <div class="form-group">
+        <label>New password</label>
+        <input type="password" id="new-password" placeholder="Min 8 characters" required minlength="8">
+        <p class="hint">Use at least 8 characters</p>
+      </div>
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" id="confirm-password" placeholder="Re-enter new password" required minlength="8">
+      </div>
+      <button type="submit" class="submit-btn" id="submit-btn">Update password</button>
+      <div class="message" id="message"></div>
+    </form>
+
+    <a href="/auth/" class="back-link">← Back to login</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById('reset-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const messageEl = document.getElementById('message');
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = `message ${type}`;
+    }
+
+    // Check if user arrived via recovery link
+    async function checkRecoverySession() {
+      // Supabase auto-processes the hash with access_token on page load
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+      if (error || !session) {
+        // No valid session - show error and redirect
+        showMessage('This password reset link is invalid or has expired. Please request a new one.', 'error');
+        submitBtn.disabled = true;
+        setTimeout(() => {
+          window.location.href = '/auth/';
+        }, 4000);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      messageEl.className = 'message';
+      messageEl.textContent = '';
+
+      const newPassword = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+
+      if (newPassword.length < 8) {
+        showMessage('Password must be at least 8 characters', 'error');
+        return;
+      }
+
+      if (newPassword !== confirm) {
+        showMessage('Passwords do not match', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating...';
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+        if (error) throw error;
+
+        showMessage('Password updated! Redirecting to login...', 'success');
+        submitBtn.textContent = 'Done';
+        setTimeout(() => {
+          window.location.href = '/auth/';
+        }, 2000);
+      } catch (error) {
+        showMessage(error.message || 'Failed to update password', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Update password';
+      }
+    });
+
+    // Run on load
+    checkRecoverySession();
+  </script>
+</body>
+</html>

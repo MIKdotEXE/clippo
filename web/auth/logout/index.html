@@ -1,24 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Logging out...</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clippo — Logging out…</title>
+  <link rel="icon" href="../../ico_clippo.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('clippo_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --brand-500: #7c3aed;
+      --brand-600: #6d28d9;
+    }
+
+    :root, :root[data-theme="light"] {
+      --bg-body:       #fafafa;
+      --bg-gradient:   linear-gradient(135deg, #fafafa 0%, #f5f3ff 100%);
+      --card-bg:       #ffffff;
+      --border:        rgba(0,0,0,0.08);
+      --text-primary:  #18181b;
+      --text-secondary: #52525b;
+      --text-muted:    #a1a1aa;
+      --shadow-card:   0 8px 32px rgba(0,0,0,0.08);
+    }
+
+    :root[data-theme="dark"] {
+      --bg-body:       #0a0a0a;
+      --bg-gradient:   linear-gradient(135deg, #0a0a0a 0%, #1a0f2e 100%);
+      --card-bg:       #141414;
+      --border:        rgba(255,255,255,0.08);
+      --text-primary:  #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --text-muted:    #71717a;
+      --shadow-card:   0 16px 40px rgba(0,0,0,0.6);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .logout-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 56px 48px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logout-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--brand-500), transparent);
+      animation: scan 2s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
+    .logo {
+      display: block;
+      height: 24px;
+      width: auto;
+      margin: 0 auto 36px;
+      animation: logo-shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes logo-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15) saturate(1.2); }
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--brand-500);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .check-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.1);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+    }
+
+    .check-icon.show {
+      display: flex;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .check-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: #22c55e;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .redirect-note {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', monospace;
+    }
+
+    .redirect-note a {
+      color: var(--brand-500);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .redirect-note a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <p>Logging out...</p>
+  <div class="logout-card">
+    <img class="logo" src="../../clippo_logo.svg" alt="Clippo"/>
+
+    <div class="spinner" id="spinner"></div>
+    <div class="check-icon" id="checkIcon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+    <h1 id="title">Signing you out…</h1>
+    <p id="message">Clearing your session. This only takes a moment.</p>
+
+    <div class="redirect-note">
+      You'll be redirected to <a href="/">clippo.app</a> shortly.
+    </div>
+  </div>
+
   <script>
-    const supabaseClient = supabase.createClient(
-      'https://phnfwoqyyqnqmmteygnb.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc'
-    );
+    const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     supabaseClient.auth.signOut().then(() => {
       localStorage.removeItem('clippo_user_id');
       localStorage.removeItem('clippo_user_email');
-      document.body.innerHTML = '<p>Logged out successfully</p>';
+      localStorage.removeItem('clippo_username');
+
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('checkIcon').classList.add('show');
+      document.getElementById('title').textContent = 'Signed out';
+      document.getElementById('message').textContent = 'Your session has been cleared successfully.';
+
       setTimeout(() => {
         window.location.href = '/';
-      }, 1000);
+      }, 1800);
+    }).catch(() => {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('title').textContent = 'Signed out';
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
     });
   </script>
 </body>

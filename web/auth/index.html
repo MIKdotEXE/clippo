@@ -4,30 +4,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clippo - Login</title>
-  <link rel="icon" href="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="../ico_clippo.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('clippo_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --brand-primary: #ed1c24;
-      --brand-dark: #c41920;
+      --brand-primary: #7c3aed;
+      --brand-dark: #6d28d9;
+      --accent-danger: #ef4444;
+      --accent-success: #22c55e;
+    }
+
+    :root, :root[data-theme="light"] {
       --bg-white: #ffffff;
       --bg-light: #fafafa;
-      --border-light: rgba(237, 28, 36, 0.12);
-      --border-medium: rgba(237, 28, 36, 0.25);
-      --text-primary: #1a1a1a;
-      --text-secondary: #4a4a4a;
-      --text-muted: #7a7a7a;
+      --bg-gradient: linear-gradient(135deg, #fafafa 0%, #f5f3ff 100%);
+      --border-light: rgba(0, 0, 0, 0.08);
+      --border-medium: rgba(0, 0, 0, 0.15);
+      --text-primary: #18181b;
+      --text-secondary: #52525b;
+      --text-muted: #a1a1aa;
       --text-on-brand: #ffffff;
-      --accent-danger: #ed1c24;
-      --accent-success: #27ae60;
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.08);
+      --input-bg: #fafafa;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-white: #141414;
+      --bg-light: #0a0a0a;
+      --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a0f2e 100%);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.15);
+      --text-primary: #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --text-on-brand: #ffffff;
+      --shadow-card: 0 16px 40px rgba(0,0,0,0.6);
+      --input-bg: #1c1c1c;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Zain', sans-serif;
-      background: linear-gradient(135deg, var(--bg-light) 0%, #fff5f5 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -38,42 +64,63 @@
     .auth-container {
       background: var(--bg-white);
       border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(237, 28, 36, 0.12);
+      box-shadow: var(--shadow-card);
       padding: 40px;
       width: 100%;
       max-width: 400px;
       border: 1px solid var(--border-light);
+      position: relative;
     }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      z-index: 100;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .theme-toggle svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-toggle .icon-moon { display: none; }
+    :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
     .logo-section {
       text-align: center;
       margin-bottom: 32px;
     }
 
-    .logo-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      border-radius: 16px;
-      margin-bottom: 16px;
+    .logo-full {
+      width: auto;
+      height: 26px;
+      display: block;
+      margin: 0 auto 16px;
+      animation: logo-shimmer 3s ease-in-out infinite;
     }
 
-    .logo-icon svg {
-      width: 36px;
-      height: 36px;
-      fill: var(--text-on-brand);
-    }
-
-    .logo-section h1 {
-      font-family: 'Zain', sans-serif;
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--brand-dark);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+    @keyframes logo-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15) saturate(1.2); }
     }
 
     .logo-section p {
@@ -92,9 +139,9 @@
       flex: 1;
       padding: 12px;
       border: 1px solid var(--border-medium);
-      background: var(--bg-light);
+      background: var(--input-bg);
       border-radius: 8px;
-      font-family: 'Zain', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -121,7 +168,7 @@
 
     .form-group label {
       display: block;
-      font-family: 'Zain', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 10px;
       font-weight: 400;
       letter-spacing: 1px;
@@ -133,10 +180,11 @@
     .form-group input {
       width: 100%;
       padding: 12px 14px;
-      background: var(--bg-light);
+      background: var(--input-bg);
+      color: var(--text-primary);
       border: 1px solid var(--border-light);
       border-radius: 8px;
-      font-family: 'Zain', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 14px;
       color: var(--text-primary);
       transition: all 0.2s ease;
@@ -145,7 +193,7 @@
     .form-group input:focus {
       outline: none;
       border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.12);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
     }
 
     .form-group input::placeholder {
@@ -158,7 +206,7 @@
       background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
       border: none;
       border-radius: 8px;
-      font-family: 'Zain', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -170,7 +218,7 @@
 
     .submit-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
     }
 
     .submit-btn:disabled {
@@ -285,14 +333,13 @@
   </style>
 </head>
 <body>
+  <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
   <div class="auth-container">
     <div class="logo-section">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-      </div>
-      <h1>Clippo</h1>
+      <img class="logo-full" src="../clippo_logo.svg" alt="Clippo"/>
       <p>Save and organize your video clips</p>
     </div>
 
@@ -372,6 +419,14 @@
   </div>
 
   <script>
+    // Theme toggle
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('clippo_theme', next);
+    });
+
     // Supabase credentials
     const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
@@ -644,7 +699,7 @@
 
       try {
         const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + '/auth/'
+          redirectTo: window.location.origin + '/auth/reset/'
         });
 
         if (error) throw error;

@@ -17,21 +17,21 @@ if (typeof widget === 'undefined') {
   var currentVideo = null;
 }
 
-// Clippo Brand Colors - Red & White theme
+// Clippo Brand Colors - Purple & White theme
 if (typeof COLORS === 'undefined') {
   var COLORS = {
-    brandPrimary: "#ed1c24",
-    brandDark: "#c41920",
-    brandLight: "#ff3b42",
+    brandPrimary: "#7c3aed",
+    brandDark: "#6d28d9",
+    brandLight: "#8b5cf6",
     bgWhite: "#ffffff",
     bgLight: "#fafafa",
-    borderLight: "rgba(237, 28, 36, 0.15)",
-    borderMedium: "rgba(237, 28, 36, 0.3)",
-    textPrimary: "#1a1a1a",
-    textSecondary: "#4a4a4a",
-    textMuted: "#7a7a7a",
+    borderLight: "rgba(0, 0, 0, 0.08)",
+    borderMedium: "rgba(0, 0, 0, 0.15)",
+    textPrimary: "#18181b",
+    textSecondary: "#52525b",
+    textMuted: "#a1a1aa",
     textOnBrand: "#ffffff",
-    accentDanger: "#ed1c24"
+    accentDanger: "#ef4444"
   };
 }
 
@@ -165,7 +165,7 @@ function createWidget(video) {
     const style = document.createElement("style");
     style.id = "vm-style";
     style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
       @keyframes vmSlideIn {
         from { opacity: 0; transform: translateX(20px); }
@@ -173,37 +173,38 @@ function createWidget(video) {
       }
 
       @keyframes vmPulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(237, 28, 36, 0.4); }
-        50% { box-shadow: 0 0 0 8px rgba(237, 28, 36, 0); }
+        0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+        50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
       }
 
       #clippo-overlay-btn {
         position: absolute;
         top: 10px;
         right: 10px;
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        background: rgba(237, 28, 36, 0.7);
+        width: 40px;
+        height: 40px;
+        background: transparent;
         border: none;
         cursor: pointer;
         z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 0.5;
-        transition: opacity 0.2s ease, transform 0.2s ease;
+        opacity: 0.75;
+        transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
         padding: 0;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
       }
 
       #clippo-overlay-btn:hover {
         opacity: 1;
         transform: scale(1.1);
+        filter: drop-shadow(0 4px 16px rgba(124, 58, 237, 0.6));
       }
 
       #clippo-overlay-btn img {
-        width: 22px;
-        height: 22px;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
       }
 
@@ -220,7 +221,7 @@ function createWidget(video) {
         border: 1px solid ${COLORS.borderLight};
         border-radius: 6px;
         color: ${COLORS.textSecondary};
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 11px;
         font-weight: 700;
         cursor: pointer;
@@ -238,7 +239,7 @@ function createWidget(video) {
       }
 
       #clippo-widget, #clippo-widget * {
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         box-sizing: border-box;
       }
 
@@ -247,7 +248,7 @@ function createWidget(video) {
         border: 2px solid ${COLORS.borderMedium};
         padding: 16px;
         border-radius: 14px;
-        box-shadow: 0 8px 32px rgba(237, 28, 36, 0.15);
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.15);
         color: ${COLORS.textPrimary};
       }
 
@@ -267,13 +268,13 @@ function createWidget(video) {
       }
 
       #clippo-widget .vm-logo-img {
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
+        width: auto;
+        height: 18px;
+        border-radius: 0;
       }
 
       #clippo-widget .vm-logo {
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 14px;
         font-weight: 800;
         letter-spacing: 0.5px;
@@ -329,7 +330,7 @@ function createWidget(video) {
       }
 
       #clippo-widget .vm-label {
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -337,6 +338,17 @@ function createWidget(video) {
         color: ${COLORS.textMuted};
         margin: 12px 0 5px;
         display: block;
+      }
+
+      #clippo-widget .vm-label-cat {
+        color: ${COLORS.textMuted};
+        font-weight: 700;
+      }
+
+      #clippo-widget #vm-macro,
+      #clippo-widget #vm-cat {
+        color: ${COLORS.brandPrimary} !important;
+        font-weight: 700 !important;
       }
 
       #clippo-widget input[type="text"] {
@@ -354,7 +366,7 @@ function createWidget(video) {
       #clippo-widget input[type="text"]:focus {
         outline: none;
         border-color: ${COLORS.brandPrimary};
-        box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.12);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
       }
 
       #clippo-widget input[type="text"]::placeholder {
@@ -376,7 +388,7 @@ function createWidget(video) {
 
       #clippo-widget .vm-time-group input {
         text-align: center;
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 14px;
         font-weight: 700;
         color: ${COLORS.brandPrimary};
@@ -384,7 +396,7 @@ function createWidget(video) {
       }
 
       #clippo-widget .vm-time-separator {
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 16px;
         font-weight: 700;
         color: ${COLORS.textMuted};
@@ -399,7 +411,7 @@ function createWidget(video) {
         border: 1px solid ${COLORS.borderLight};
         border-radius: 6px;
         color: ${COLORS.textSecondary};
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -416,7 +428,7 @@ function createWidget(video) {
 
       #clippo-widget .vm-duration {
         text-align: center;
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 11px;
         font-weight: 700;
         color: ${COLORS.textMuted};
@@ -443,7 +455,7 @@ function createWidget(video) {
         border: none;
         border-radius: 8px;
         color: ${COLORS.textOnBrand};
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -453,7 +465,7 @@ function createWidget(video) {
 
       #clippo-widget .vm-btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
       }
 
       #clippo-widget .vm-btn-secondary {
@@ -463,7 +475,7 @@ function createWidget(video) {
         border: 1px solid ${COLORS.borderMedium};
         border-radius: 8px;
         color: ${COLORS.brandPrimary};
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.3px;
@@ -494,7 +506,7 @@ function createWidget(video) {
         border: 1px solid ${COLORS.borderMedium};
         background: ${COLORS.bgWhite};
         border-radius: 6px;
-        font-family: 'Zain', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -568,16 +580,17 @@ function createWidget(video) {
     display: none;
   `;
 
-  // Check auth status and render appropriate UI
+  // Render auth form immediately as default to avoid empty widget flash
+  // (will be replaced by clip form if user is logged in)
+  document.body.appendChild(widget);
+  renderAuthForm();
+
+  // Then check auth status async and swap to clip form if needed
   checkAuth().then((loggedIn) => {
     if (loggedIn) {
       renderClipForm();
-    } else {
-      renderAuthForm();
     }
   });
-
-  document.body.appendChild(widget);
 
   // Add overlay button on YouTube video player
   if (clippoSettings.showOverlay && !document.getElementById("clippo-overlay-btn")) {
@@ -594,7 +607,7 @@ function createWidget(video) {
       const btn = document.createElement("button");
       btn.id = "clippo-overlay-btn";
       btn.title = "Open Clippo";
-      btn.innerHTML = `<img src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48_n.png" alt="Clippo"/>`;
+      btn.innerHTML = `<img src="` + chrome.runtime.getURL('ico_clippo.svg') + `" alt="Clippo"/>`;
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -639,8 +652,7 @@ function renderAuthForm() {
   widget.innerHTML = `
     <div class="vm-header">
       <div class="vm-logo-container">
-        <img class="vm-logo-img" src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo"/>
-        <span class="vm-logo">Clippo</span>
+        <img class="vm-logo-img" src="${chrome.runtime.getURL('clippo_logo.svg')}" alt="Clippo"/>
       </div>
       <div class="vm-header-btns">
         <button class="vm-settings-btn" id="vm-settings" title="Settings">
@@ -711,8 +723,7 @@ function renderClipForm() {
   widget.innerHTML = `
     <div class="vm-header">
       <div class="vm-logo-container">
-        <img class="vm-logo-img" src="https://phnfwoqyyqnqmmteygnb.supabase.co/storage/v1/object/public/assets/icon_48.png" alt="Clippo"/>
-        <span class="vm-logo">Clippo</span>
+        <img class="vm-logo-img" src="${chrome.runtime.getURL('clippo_logo.svg')}" alt="Clippo"/>
       </div>
       <div class="vm-header-btns">
         <button class="vm-settings-btn" id="vm-settings" title="Settings">
@@ -731,11 +742,11 @@ function renderClipForm() {
     <label class="vm-label">Clip Title</label>
     <input type="text" id="vm-title" placeholder="Enter a title for this clip"/>
 
-    <label class="vm-label">Macro Category</label>
+    <label class="vm-label vm-label-cat">Macro Category</label>
     <input type="text" id="vm-macro" placeholder="e.g. Gaming" list="vm-macro-list"/>
     <datalist id="vm-macro-list"></datalist>
 
-    <label class="vm-label">Category</label>
+    <label class="vm-label vm-label-cat">Category</label>
     <input type="text" id="vm-cat" placeholder="e.g. Walkthrough" list="vm-cat-list"/>
     <datalist id="vm-cat-list"></datalist>
 
@@ -766,7 +777,18 @@ function renderClipForm() {
 
   setupLogoFallback();
   bindSettingsBtn();
-  bindWidget(currentVideo);
+
+  // Ensure currentVideo is still valid (YouTube SPA may have replaced it)
+  const video = document.querySelector("video");
+  if (video) currentVideo = video;
+
+  if (currentVideo) {
+    try {
+      bindWidget(currentVideo);
+    } catch (e) {
+      console.warn("Clippo: bindWidget failed", e);
+    }
+  }
   loadLists();
 
   setTimeout(() => {
@@ -1043,7 +1065,9 @@ function bindWidget(video) {
       ppBtn.textContent = "▶ Play";
     }
   });
-  // Sync button text with video state
+  // Set initial state based on current video state
+  ppBtn.textContent = video.paused ? "▶ Play" : "⏸ Pause";
+  // Sync button text with video state changes
   video.addEventListener("play", () => { ppBtn.textContent = "⏸ Pause"; });
   video.addEventListener("pause", () => { ppBtn.textContent = "▶ Play"; });
 
