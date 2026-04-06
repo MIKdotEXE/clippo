@@ -45,15 +45,15 @@ async function init() {
     }
 
     // Store uid for extension flow
-    localStorage.setItem('videomark_user_id', uid);
+    localStorage.setItem('clippo_user_id', uid);
   } else {
     currentUser = session.user;
-    localStorage.setItem('videomark_user_id', currentUser.id);
-    localStorage.setItem('videomark_user_email', currentUser.email);
+    localStorage.setItem('clippo_user_id', currentUser.id);
+    localStorage.setItem('clippo_user_email', currentUser.email);
   }
 
   // Set user email display
-  const email = localStorage.getItem('videomark_user_email') || 'User';
+  const email = localStorage.getItem('clippo_user_email') || 'User';
   userEmail.textContent = email;
 
   // Load data
@@ -65,7 +65,7 @@ async function init() {
 
 // Load clips, categories, and macros from Supabase
 async function loadData() {
-  const userId = localStorage.getItem('videomark_user_id');
+  const userId = localStorage.getItem('clippo_user_id');
 
   if (!userId) {
     window.location.href = '../auth/';
@@ -319,7 +319,7 @@ async function editClip(clip) {
   const newTitle = prompt('Edit clip title:', clip.title);
   if (newTitle === null || newTitle.trim() === '') return;
 
-  const userId = localStorage.getItem('videomark_user_id');
+  const userId = localStorage.getItem('clippo_user_id');
 
   try {
     const { error } = await supabase
@@ -343,7 +343,7 @@ async function editClip(clip) {
 async function deleteClip(clip) {
   if (!confirm(`Delete "${clip.title}"?`)) return;
 
-  const userId = localStorage.getItem('videomark_user_id');
+  const userId = localStorage.getItem('clippo_user_id');
 
   try {
     const { error } = await supabase
@@ -367,8 +367,8 @@ async function deleteClip(clip) {
 // Logout
 async function logout() {
   await supabase.auth.signOut();
-  localStorage.removeItem('videomark_user_id');
-  localStorage.removeItem('videomark_user_email');
+  localStorage.removeItem('clippo_user_id');
+  localStorage.removeItem('clippo_user_email');
   window.location.href = '../auth/';
 }
 

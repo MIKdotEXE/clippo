@@ -60,8 +60,8 @@ function setLoading(button, loading) {
 // Handle successful authentication
 async function handleAuthSuccess(user) {
   // Store user ID in localStorage for archive page
-  localStorage.setItem('videomark_user_id', user.id);
-  localStorage.setItem('videomark_user_email', user.email);
+  localStorage.setItem('clippo_user_id', user.id);
+  localStorage.setItem('clippo_user_email', user.email);
 
   // Redirect to archive with user ID
   window.location.href = `../archive/?uid=${user.id}`;
