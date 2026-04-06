@@ -69,9 +69,49 @@ document.getElementById('setting-username').addEventListener('input', (e) => {
   }, 500);
 });
 
-// Change password
-document.getElementById('change-password-btn').addEventListener('click', () => {
-  chrome.tabs.create({ url: 'https://clippo.app/auth/' });
+// Change password — send reset email directly
+document.getElementById('change-password-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('change-password-btn');
+
+  chrome.storage.local.get(['clippo_user_email'], async (data) => {
+    const email = data.clippo_user_email;
+    if (!email) {
+      alert('No email found. Please log in first.');
+      return;
+    }
+
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    try {
+      const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
+
+      const redirectTo = encodeURIComponent('https://clippo.app/auth/reset/');
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${redirectTo}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (!response.ok) throw new Error('Failed to send');
+
+      btn.textContent = 'Email sent!';
+      setTimeout(() => {
+        btn.textContent = 'Reset';
+        btn.disabled = false;
+      }, 3000);
+    } catch (e) {
+      btn.textContent = 'Failed';
+      setTimeout(() => {
+        btn.textContent = 'Reset';
+        btn.disabled = false;
+      }, 2000);
+    }
+  });
 });
 
 // Delete account
