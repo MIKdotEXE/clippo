@@ -385,10 +385,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCategoryCards() {
     categoryCardsContainer.innerHTML = "";
 
-    categories.forEach(cat => {
-      const clipCount = clips.filter(c => c.cat === cat.name).length;
+    // Filter categories by selected macro (if macro filter is active)
+    let visibleCategories = categories;
+    if (activeFilter?.type === "macro") {
+      visibleCategories = categories.filter(c => c.macro === activeFilter.value);
+    }
 
-      // Hide "Others" if it has no clips
+    visibleCategories.forEach(cat => {
+      // Count clips matching this category (and macro if filtered)
+      let clipCount;
+      if (activeFilter?.type === "macro") {
+        clipCount = clips.filter(c => c.cat === cat.name && c.macro === activeFilter.value).length;
+      } else {
+        clipCount = clips.filter(c => c.cat === cat.name).length;
+      }
+
+      // Hide "Others" if it has no clips in current context
       if (cat.name === "Others" && clipCount === 0) return;
 
       const card = document.createElement("div");
@@ -571,7 +583,16 @@ document.addEventListener("DOMContentLoaded", () => {
         card.scrollIntoView({ behavior: "smooth", block: "start" });
       };
 
-      playBtn?.addEventListener("click", expandCard);
+      playBtn?.addEventListener("click", () => {
+        // If card is already expanded, treat as rewatch (reset overlay + reload)
+        if (card.classList.contains("expanded")) {
+          card.querySelector(".video-ended-overlay")?.classList.remove("show");
+          const iframe = card.querySelector("iframe");
+          iframe.src = `https://clippo.app/embed/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}&clipId=${clip.id}&t=${Date.now()}`;
+        } else {
+          expandCard();
+        }
+      });
       thumb?.addEventListener("click", expandCard);
 
       // Replay button
