@@ -135,17 +135,23 @@ clippo/
 
 ## TODO
 
-### Post-approval: testing funzionale con estensione live
+### Post-approval: testing funzionale con estensione live (v1.1.3)
 - [ ] Login/signup dall'estensione (popup + widget) → verifica che i token si salvino
 - [ ] clippo.app/archive/ → verifica che trovi l'estensione dallo Store
-- [ ] Salva clip da widget → verifica sync Supabase
+- [ ] **Supabase pull sync** → dopo login, le clip vengono pullate da Supabase? Apri archive → clip ripristinate?
+- [ ] Salva nuova clip da widget → verifica sync push a Supabase
 - [ ] Share clip → apri link → verifica branded player
-- [ ] Video nell'archive → verifica che /embed/ funzioni
+- [ ] Video nell'archive → verifica che /embed/ funzioni (no errore 153)
+- [ ] **Category pills filtrate per macro** → seleziona macro nella sidebar → pills mostrano solo categorie di quella macro
+- [ ] **Macro toggle** → clicca macro selezionata → si deseleziona
+- [ ] **Watch Clip rewatch** → video finito → premi "Watch Clip" in basso → riparte senza overlay bloccato
 - [ ] Reset password (flow completo: email → link → /auth/reset/ → cambio)
+- [ ] **Cambio password inline** → settings → Change → form inline → funziona senza logout
 - [ ] Login con Google, GitHub, Discord
 - [ ] Logout dall'estensione → verifica pulizia token
+- [ ] **Archive gateway** → clippo.app/archive/ → logo centrato, branding viola, "Get Chrome Extension" punta allo Store
 
-### Code quality refactor (v1.1.2)
+### Code quality refactor (next version)
 - **Estrarre config.js condiviso**: Supabase URL + anon key + costanti brand sono copia-incollati in 10+ file. Creare un unico `config.js` importato ovunque (extension) e un `config` inline per web.
 - **Spezzare content.js in moduli**: 1100+ righe monolitiche con HTML/CSS/JS/auth/UI mischiati. Separare in: `widget-ui.js` (template HTML + CSS), `widget-auth.js` (login/signup), `widget-clip.js` (logica clip/save), e `content.js` come orchestratore.
 - **Unificare storage strategy**: localStorage (web) vs chrome.storage (extension) con sync manuale è fragile. Creare un wrapper `storage.js` con API unificata che gestisce la sincronizzazione.
