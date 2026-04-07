@@ -127,37 +127,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Load data
-  chrome.storage.sync.get({
-    clips: [],
-    categories: [],
-    macroCategories: ["Others"]
-  }, (data) => {
-    macroCats = data.macroCategories.slice();
-    if (!macroCats.includes("Others")) macroCats.unshift("Others");
+  // Load data — first try pulling from Supabase, then fallback to local
+  function loadLocalData() {
+    chrome.storage.sync.get({
+      clips: [],
+      categories: [],
+      macroCategories: ["Others"]
+    }, (data) => {
+      macroCats = data.macroCategories.slice();
+      if (!macroCats.includes("Others")) macroCats.unshift("Others");
 
-    categories = data.categories.map(c =>
-      (c && c.name) ? c : { name: c, icon: null, macro: "Others" }
-    );
-    if (!categories.some(c => c.name === "Others")) {
-      categories.push({ name: "Others", icon: null, macro: "Others" });
-    }
+      categories = data.categories.map(c =>
+        (c && c.name) ? c : { name: c, icon: null, macro: "Others" }
+      );
+      if (!categories.some(c => c.name === "Others")) {
+        categories.push({ name: "Others", icon: null, macro: "Others" });
+      }
 
-    clips = data.clips.map((c, i) => ({
-      id: i,
-      videoId: c.videoId,
-      title: c.title,
-      start: c.start,
-      end: c.end,
-      macro: c.macro || "Others",
-      cat: c.cat || "Others"
-    }));
+      clips = data.clips.map((c, i) => ({
+        id: i,
+        videoId: c.videoId,
+        title: c.title,
+        start: c.start,
+        end: c.end,
+        macro: c.macro || "Others",
+        cat: c.cat || "Others"
+      }));
 
-    updateDataLists();
-    renderCategoryCards();
-    renderSidebar();
-    renderClips();
-  });
+      updateDataLists();
+      renderCategoryCards();
+      renderSidebar();
+      renderClips();
+    });
+  }
+
+  // Try syncing from Supabase first (pulls cloud data into local storage)
+  try {
+    chrome.runtime.sendMessage({ action: "syncFromSupabase" }, (response) => {
+      if (chrome.runtime.lastError || !response?.success) {
+        console.log("Clippo: Supabase sync unavailable, loading local data");
+      } else {
+        console.log("Clippo: synced from Supabase");
+      }
+      // Always load from local storage (which was updated by sync if successful)
+      loadLocalData();
+    });
+  } catch (e) {
+    loadLocalData();
+  }
 
   function saveClips() {
     const toSave = clips.map(c => ({

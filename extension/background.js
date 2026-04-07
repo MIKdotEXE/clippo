@@ -195,6 +195,81 @@ chrome.runtime.onMessageExternal.addListener(
 
 
 // =============================================
+// PULL FROM SUPABASE (sync down)
+// =============================================
+async function pullFromSupabase() {
+  const userId = await getUserId();
+  const accessToken = await getAccessToken();
+  if (!userId || !accessToken) return null;
+
+  try {
+    // Fetch clips
+    const clipsRes = await fetch(`${SUPABASE_URL}/rest/v1/clips?user_id=eq.${userId}&order=created_at.asc`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    // Fetch categories
+    const catsRes = await fetch(`${SUPABASE_URL}/rest/v1/categories?user_id=eq.${userId}`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    // Fetch macros
+    const macrosRes = await fetch(`${SUPABASE_URL}/rest/v1/macro_categories?user_id=eq.${userId}`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!clipsRes.ok || !catsRes.ok || !macrosRes.ok) {
+      console.warn('Clippo: pull from Supabase failed');
+      return null;
+    }
+
+    const dbClips = await clipsRes.json();
+    const dbCats = await catsRes.json();
+    const dbMacros = await macrosRes.json();
+
+    // Convert to chrome.storage format
+    const clips = dbClips.map(c => ({
+      videoId: c.video_id,
+      title: c.title,
+      macro: c.macro || 'Others',
+      cat: c.cat || 'Others',
+      start: c.start_time,
+      end: c.end_time
+    }));
+
+    const categories = dbCats.map(c => ({
+      name: c.name,
+      icon: c.icon || null,
+      macro: c.macro || 'Others'
+    }));
+
+    const macroCategories = dbMacros.map(m => m.name);
+    if (!macroCategories.includes('Others')) macroCategories.unshift('Others');
+
+    // Save to chrome.storage.sync
+    await new Promise(resolve => {
+      chrome.storage.sync.set({ clips, categories, macroCategories }, resolve);
+    });
+
+    console.log(`Clippo: pulled ${clips.length} clips, ${categories.length} categories, ${macroCategories.length} macros from Supabase`);
+    return { clips, categories, macroCategories };
+
+  } catch (e) {
+    console.warn('Clippo: pull error', e.message);
+    return null;
+  }
+}
+
+// =============================================
 // MESSAGE HANDLERS
 // =============================================
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -210,6 +285,13 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     }
 
     return true; // Keep channel open for async response
+  }
+
+  if (req.action === "syncFromSupabase") {
+    pullFromSupabase().then(data => {
+      sendResponse({ success: !!data, data });
+    });
+    return true;
   }
 
   if (req.action === "openArchive") {

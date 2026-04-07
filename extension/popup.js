@@ -113,6 +113,9 @@ async function handleAuthSuccess(data) {
     clippo_refresh_token: data.refresh_token
   });
 
+  // Sync clips from Supabase after login
+  chrome.runtime.sendMessage({ action: "syncFromSupabase" }, () => {});
+
   showLoggedIn(email);
 }
 
