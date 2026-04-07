@@ -3,74 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clippo - Archive</title>
-  <link rel="icon" href="../clippo_logo.svg" type="image/svg+xml">
+  <title>Clippo — Archive</title>
+  <link rel="icon" href="../ico_clippo.svg" type="image/svg+xml">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta property="og:title" content="Clippo — Your Clip Archive">
+  <meta property="og:description" content="Access your saved YouTube moments with Clippo.">
+  <meta property="og:image" content="https://clippo.app/ico_clippo.svg">
+  <meta property="og:url" content="https://clippo.app/archive/">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('clippo_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --brand-primary: #7c3aed;
-      --brand-dark: #6d28d9;
-      --bg-white: #ffffff;
-      --bg-light: #fafafa;
-      --border-light: rgba(0, 0, 0, 0.08);
-      --border-medium: rgba(0, 0, 0, 0.15);
+      --brand-500: #7c3aed;
+      --brand-600: #6d28d9;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    :root, :root[data-theme="light"] {
+      --bg-body: #fafafa;
+      --bg-gradient: linear-gradient(135deg, #fafafa 0%, #f5f3ff 100%);
+      --card-bg: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.15);
       --text-primary: #18181b;
       --text-secondary: #52525b;
       --text-muted: #a1a1aa;
-      --text-on-brand: #ffffff;
-      --accent-danger: #ef4444;
-      --accent-success: #22c55e;
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.08);
+      --info-bg: rgba(124,58,237,0.08);
+      --info-border: rgba(124,58,237,0.2);
+      --error-bg: rgba(239,68,68,0.08);
+      --error-border: rgba(239,68,68,0.2);
+      --success-bg: rgba(34,197,94,0.08);
+      --success-border: rgba(34,197,94,0.2);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html[data-theme="dark"] {
+      --bg-body: #0a0a0a;
+      --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a0f2e 100%);
+      --card-bg: #141414;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.15);
+      --text-primary: #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --shadow-card: 0 16px 40px rgba(0,0,0,0.6);
+      --info-bg: rgba(124,58,237,0.12);
+      --info-border: rgba(124,58,237,0.3);
+      --error-bg: rgba(239,68,68,0.12);
+      --error-border: rgba(239,68,68,0.3);
+      --success-bg: rgba(34,197,94,0.12);
+      --success-border: rgba(34,197,94,0.3);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: linear-gradient(135deg, var(--bg-light) 0%, #f5f3ff 100%);
+      font-family: var(--font-sans);
+      background: var(--bg-gradient);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      background: var(--bg-white);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(237, 28, 36, 0.12);
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
       padding: 48px;
       width: 100%;
-      max-width: 480px;
+      max-width: 440px;
       text-align: center;
-      border: 1px solid var(--border-light);
     }
 
     .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      border-radius: 16px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 24px rgba(237, 28, 36, 0.25);
+      display: block;
+      height: 28px;
+      width: auto;
+      margin: 0 auto 32px;
+      animation: logo-shimmer 3s ease-in-out infinite;
     }
 
-    .logo svg {
-      width: 40px;
-      height: 40px;
-      fill: var(--text-on-brand);
+    @keyframes logo-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15) saturate(1.2); }
     }
 
     h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
-      color: var(--brand-dark);
-      letter-spacing: 1px;
-      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
     }
 
     .subtitle {
@@ -80,26 +111,27 @@
     }
 
     .status {
-      padding: 16px;
+      padding: 14px 16px;
       border-radius: 10px;
-      margin-bottom: 24px;
-      font-size: 14px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 500;
     }
 
-    .status.loading { background: var(--bg-light); color: var(--text-secondary); }
-    .status.success { background: rgba(39, 174, 96, 0.1); border: 1px solid rgba(39, 174, 96, 0.3); color: var(--accent-success); }
-    .status.error { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); color: var(--accent-danger); }
-    .status.info { background: rgba(237, 28, 36, 0.1); border: 1px solid rgba(237, 28, 36, 0.3); color: var(--brand-primary); }
+    .status.loading { background: var(--info-bg); border: 1px solid var(--info-border); color: var(--brand-500); }
+    .status.success { background: var(--success-bg); border: 1px solid var(--success-border); color: #22c55e; }
+    .status.error { background: var(--error-bg); border: 1px solid var(--error-border); color: #ef4444; }
+    .status.info { background: var(--info-bg); border: 1px solid var(--info-border); color: var(--brand-500); }
 
     .spinner {
       display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border-light);
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
       border-radius: 50%;
-      border-top-color: var(--brand-primary);
+      border-top-color: var(--brand-500);
       animation: spin 0.8s linear infinite;
-      margin-right: 10px;
+      margin-right: 8px;
       vertical-align: middle;
     }
 
@@ -107,82 +139,93 @@
 
     .btn {
       display: inline-block;
-      padding: 14px 28px;
+      padding: 13px 28px;
       border-radius: 10px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-sans);
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
       border: none;
-      margin: 6px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
-      color: var(--text-on-brand);
+      background: var(--brand-500);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.3);
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+      background: var(--brand-600);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(124,58,237,0.4);
     }
 
     .btn-secondary {
-      background: var(--bg-white);
+      background: var(--card-bg);
       color: var(--text-secondary);
-      border: 1px solid var(--border-medium);
+      border: 1px solid var(--border-strong);
     }
 
     .btn-secondary:hover {
-      border-color: var(--brand-primary);
-      color: var(--brand-primary);
+      border-color: var(--brand-500);
+      color: var(--brand-500);
     }
 
     .buttons {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
 
     .user-info {
-      background: var(--bg-light);
-      padding: 12px 16px;
-      border-radius: 8px;
+      background: var(--info-bg);
+      padding: 10px 16px;
+      border-radius: 100px;
       margin-bottom: 24px;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-secondary);
+      display: inline-block;
     }
 
-    .user-info strong { color: var(--text-primary); }
+    .user-info strong { color: var(--text-primary); font-weight: 600; }
     .hidden { display: none !important; }
 
     .footer-links {
-      margin-top: 32px;
+      margin-top: 28px;
       padding-top: 20px;
-      border-top: 1px solid var(--border-light);
+      border-top: 1px solid var(--border);
       font-size: 13px;
     }
 
     .footer-links a {
-      color: var(--text-secondary);
+      color: var(--text-muted);
       text-decoration: none;
       margin: 0 12px;
+      transition: color 0.15s;
     }
 
-    .footer-links a:hover { color: var(--brand-primary); }
-    .extension-icon { font-size: 48px; margin-bottom: 16px; }
+    .footer-links a:hover { color: var(--brand-500); }
+
+    .extension-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+    }
+
+    p.desc {
+      margin: 16px 0 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </div>
+    <img class="logo" src="../clippo_logo.svg" alt="Clippo"/>
     <h1>Clip Archive</h1>
     <p class="subtitle">Access your saved video moments</p>
 
@@ -200,7 +243,6 @@
   </div>
 
   <script>
-    // Extension ID
     const EXTENSION_ID = 'dffdbdjjppbfkejaaeeglflebiepofed';
     const content = document.getElementById('content');
 
@@ -217,13 +259,11 @@
     function showExtensionNotFound(email) {
       content.innerHTML = `
         <div class="user-info">Logged in as: <strong>${email}</strong></div>
-        <div class="extension-icon">🧩</div>
+        <img class="extension-icon" src="../ico_clippo.svg" alt=""/>
         <div class="status info">Clippo extension not detected</div>
-        <p style="margin: 20px 0; color: var(--text-secondary); font-size: 14px;">
-          Install the Chrome extension to access your clip archive
-        </p>
+        <p class="desc">Install the Chrome extension to access your clip archive</p>
         <div class="buttons">
-          <a href="#" class="btn btn-primary">Get Chrome Extension</a>
+          <a href="https://chromewebstore.google.com/detail/clippo/dffdbdjjppbfkejaaeeglflebiepofed" target="_blank" class="btn btn-primary">Get Chrome Extension</a>
           <button class="btn btn-secondary" onclick="tryConnect()">Retry Connection</button>
         </div>
       `;
@@ -257,7 +297,6 @@
 
       showConnecting(userEmail);
 
-      // Try to connect to extension
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
         try {
           chrome.runtime.sendMessage(
@@ -265,7 +304,6 @@
             { action: 'openArchive', userId: userId, userEmail: userEmail },
             response => {
               if (chrome.runtime.lastError) {
-                console.log('Extension error:', chrome.runtime.lastError.message);
                 showExtensionNotFound(userEmail);
               } else if (response && response.success) {
                 showSuccess(userEmail);
@@ -275,7 +313,6 @@
             }
           );
 
-          // Timeout fallback
           setTimeout(() => {
             if (content.innerHTML.includes('Connecting')) {
               showExtensionNotFound(userEmail);
@@ -283,7 +320,6 @@
           }, 3000);
 
         } catch (e) {
-          console.log('Extension error:', e);
           showExtensionNotFound(userEmail);
         }
       } else {
@@ -292,28 +328,22 @@
     }
 
     async function init() {
-      // Check URL params first (from login redirect)
       const urlParams = new URLSearchParams(window.location.search);
       const uid = urlParams.get('uid');
+      if (uid) localStorage.setItem('clippo_user_id', uid);
 
-      if (uid) {
-        localStorage.setItem('clippo_user_id', uid);
-      }
-
-      // Check localStorage for existing login
       const userId = localStorage.getItem('clippo_user_id');
 
       if (userId) {
         tryConnect();
       } else {
-        // Try Supabase session
         try {
           const SUPABASE_URL = 'https://phnfwoqyyqnqmmteygnb.supabase.co';
           const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobmZ3b3F5eXFucW1tdGV5Z25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NTQwNjQsImV4cCI6MjA4MjQzMDA2NH0.j_9AV-MeZXhRdlrn-O9mMdvgvokSXexUnKIS2r9mljc';
 
           if (window.supabase) {
-            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const { data: { session } } = await supabase.auth.getSession();
+            const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data: { session } } = await sb.auth.getSession();
 
             if (session?.user) {
               localStorage.setItem('clippo_user_id', session.user.id);
@@ -322,15 +352,12 @@
               return;
             }
           }
-        } catch (e) {
-          console.log('Supabase error:', e);
-        }
+        } catch (e) {}
 
         showNotLoggedIn();
       }
     }
 
-    // Start after page loads
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {

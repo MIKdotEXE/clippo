@@ -589,13 +589,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Share button
       card.querySelector(".btn-share")?.addEventListener("click", () => {
         const playerUrl = `https://clippo.app/player/?v=${clip.videoId}&start=${clip.start}&end=${clip.end}`;
-        const shareTitle = `${clip.title}`;
-        const shareBody = `Check out this clip: "${clip.title}" — saved with Clippo\n${playerUrl}`;
+        const shareTitle = `${clip.title} — Clippo`;
+        const shareText = `🎬 "${clip.title}"\nWatch this clip I saved with Clippo:`;
+        const shareBody = `🎬 "${clip.title}"\nWatch this clip I saved with Clippo:\n${playerUrl}\n\nSave your favorite YouTube moments → clippo.app`;
 
         if (navigator.share) {
           navigator.share({
             title: shareTitle,
-            text: `Check out this clip: "${clip.title}" — saved with Clippo`,
+            text: shareText,
             url: playerUrl
           }).catch(() => {});
         } else {
