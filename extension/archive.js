@@ -268,9 +268,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Click on macro name to filter
       macroSpan.addEventListener("click", (e) => {
         e.stopPropagation();
-        activeFilter = { type: "macro", value: macro };
+        if (activeFilter?.type === "macro" && activeFilter.value === macro) {
+          activeFilter = null;
+        } else {
+          activeFilter = { type: "macro", value: macro };
+        }
         updateFilterUI();
         renderClips();
+        renderCategoryCards();
         renderSidebar();
       });
 
