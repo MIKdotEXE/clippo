@@ -145,6 +145,13 @@ clippo/
 - [ ] Login con Google, GitHub, Discord
 - [ ] Logout dall'estensione → verifica pulizia token
 
+### Code quality refactor (v1.1.2)
+- **Estrarre config.js condiviso**: Supabase URL + anon key + costanti brand sono copia-incollati in 10+ file. Creare un unico `config.js` importato ovunque (extension) e un `config` inline per web.
+- **Spezzare content.js in moduli**: 1100+ righe monolitiche con HTML/CSS/JS/auth/UI mischiati. Separare in: `widget-ui.js` (template HTML + CSS), `widget-auth.js` (login/signup), `widget-clip.js` (logica clip/save), e `content.js` come orchestratore.
+- **Unificare storage strategy**: localStorage (web) vs chrome.storage (extension) con sync manuale è fragile. Creare un wrapper `storage.js` con API unificata che gestisce la sincronizzazione.
+- **Aggiungere build step minimo**: un semplice script (es. `build.sh`) che concatena i moduli, minifica JS/CSS, genera lo zip. Niente bundler pesante, solo praticità.
+- **Rimuovere CSS duplicato**: i CSS variables (brand, shadows, border, font) sono definiti identici in ogni file HTML. Estrarre in `shared.css` per l'estensione e usare un unico include.
+
 ### Future features
 - **Username system**: mostrare username al posto dell'email. Richiede:
   - Tabella `profiles` su Supabase (id UUID → auth.users, username TEXT UNIQUE)
